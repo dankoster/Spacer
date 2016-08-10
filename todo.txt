@@ -1,0 +1,4 @@
+Implement object storage in Universe
+Calculate object movement inside SpaceObject
+Calculate object position based on time instead of on each render
+Remove hard-coded test objects and add them dynamically
