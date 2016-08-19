@@ -9,7 +9,7 @@ function SpaceObject(objID, mass) {
   self.obj = document.getElementById(objID);
   self.mass = mass;
   self.Velocity = new Vector(0,0);
-  self.ThrustVectors = [];
+  self.ThrustVectors = {};
   
   //check for proper initialization
   if(!self.obj) 
@@ -23,7 +23,14 @@ SpaceObject.prototype.UpdatePosition = function(){
 
   var accelerationDueToGravity = Universe.GetGravityVector(this);
 
+  var forces = [];
+  for(var t in this.ThrustVectors) {
+    if(t) forces.push(this.ThrustVectors[t]);
+  }
+  var accelerationDueToForces = Vector.GetResultVector(forces);
+  
   this.Velocity = this.Velocity.Add(accelerationDueToGravity);
+  this.Velocity = this.Velocity.Add(accelerationDueToForces);
 
   this.X += this.Velocity.X;
   this.Y += this.Velocity.Y;

@@ -81,8 +81,10 @@ Vector.GetResultVector = function(vectors) {
   if(Array.isArray(vectors)){
     var result = new Vector(0, 0);
     for(var v in vectors) {
-      if(!(vectors[v] instanceof Vector)) throw 'Array must only contain Vector objects';
-      result.Add(vectors[v]);
+      if(vectors[v]){
+        if(!(vectors[v] instanceof Vector)) throw 'Array must only contain Vector objects';
+        result = result.Add(vectors[v]);
+      }
     }
     return result;
   }

@@ -16,21 +16,31 @@ function Game() {
   self.universe.Add(new SpaceObject('redcircle1', 100));
   self.universe.Add(new SpaceObject('redcircle2', 100));
   
+  self.thrust = {
+    U: new Vector(x=0, y=-.2),
+    D: new Vector(x=0, y=.2),
+    L: new Vector(x=-.2, y=0),
+    R: new Vector(x=.2, y=0)
+  };
+  
   document.addEventListener('keydown', (event) => {
     //TODO: add temporary up/down/left/right vectors to the selected object
     switch(event.key){
       case 'ArrowUp': 
         console.log(event.key);
-        // selectedObject.ThrustVectors
+        selectedObject.ThrustVectors.U = self.thrust.U;
         break;
       case 'ArrowDown':
         console.log(event.key);
+        selectedObject.ThrustVectors.D = self.thrust.D;
         break;
       case 'ArrowLeft':
         console.log(event.key);
+        selectedObject.ThrustVectors.L = self.thrust.L;
         break;
       case 'ArrowRight':
         console.log(event.key);
+        selectedObject.ThrustVectors.R = self.thrust.R;
         break;
       // default:
       //   console.log(event.key);
@@ -40,13 +50,33 @@ function Game() {
 
   document.addEventListener('keyup', (event) => {
     //TODO: remove temporary vector for the key
-    const keyName = event.key;
+    switch(event.key){
+      case 'ArrowUp': 
+        console.log(event.key);
+        selectedObject.ThrustVectors.U = undefined;
+        break;
+      case 'ArrowDown':
+        console.log(event.key);
+        selectedObject.ThrustVectors.D = undefined;
+        break;
+      case 'ArrowLeft':
+        console.log(event.key);
+        selectedObject.ThrustVectors.L = undefined;
+        break;
+      case 'ArrowRight':
+        console.log(event.key);
+        selectedObject.ThrustVectors.R = undefined;
+        break;
+      // default:
+      //   console.log(event.key);
+      //   break;
+    }
   }, false);
     
   this.mainLoop = function(tFrame) {
     self.stopMain = window.requestAnimationFrame(self.mainLoop); 
 
-    //Call your update method. In our case, we give it rAF's timestamp.
+    //Call your update method. In our case, we give it requestAnimationFrame's timestamp.
     // self.update(tFrame);
     self.render();
   }
