@@ -15,9 +15,9 @@ Universe.prototype.Add = function(so) {
   this.Objects.push(so);
 }
 
-Universe.prototype.UpdatePositions = function() {
+Universe.prototype.UpdatePositions = function(max_X, min_X, max_Y, min_Y) {
   for(var o in this.Objects){
-    this.Objects[o].UpdatePosition(this.Objects);
+    this.Objects[o].UpdatePosition(max_X, min_X, max_Y, min_Y);
   }
 }
 

@@ -10,11 +10,11 @@ function Game() {
            
   self.universe = new Universe();
   
-  var selectedObject = new SpaceObject('bluecircle', 50);
+  var selectedObject = new SpaceObject('bluecircle', 100);
   //TODO: detect SVG objects and add them automatically...
   self.universe.Add(selectedObject);
-  self.universe.Add(new SpaceObject('redcircle1', 100));
-  self.universe.Add(new SpaceObject('redcircle2', 100));
+  self.universe.Add(new SpaceObject('redcircle1', 60));
+  self.universe.Add(new SpaceObject('redcircle2', 60));
   
   self.thrust = {
     U: new Vector(x=0, y=-.2),
@@ -24,7 +24,7 @@ function Game() {
   };
   
   document.addEventListener('keydown', (event) => {
-    //TODO: add temporary up/down/left/right vectors to the selected object
+    //add temporary up/down/left/right vectors to the selected object
     switch(event.key){
       case 'ArrowUp': 
         console.log(event.key);
@@ -49,7 +49,7 @@ function Game() {
   }, false);
 
   document.addEventListener('keyup', (event) => {
-    //TODO: remove temporary vector for the key
+    //remove temporary vector for the key
     switch(event.key){
       case 'ArrowUp': 
         console.log(event.key);
@@ -89,6 +89,6 @@ function Game() {
 Game.prototype.render = function() {
   
   //TODO: separate rendering from calculating positions
-  this.universe.UpdatePositions();
+  this.universe.UpdatePositions(max_X = 1200, min_X = 0, max_Y = 700, min_Y = 0);
   
 }
