@@ -16,7 +16,7 @@ function SpaceObject(objID, mass) {
     throw objID + ' not recognized as a valid element';
 }
 
-SpaceObject.prototype.UpdatePosition = function(){
+SpaceObject.prototype.UpdatePosition = function(max_X, min_X, max_Y, min_Y){
   
   //TODO: separate rendering from calculating positions (calculating positions
   // can be done server side for multiplayer)
@@ -34,6 +34,11 @@ SpaceObject.prototype.UpdatePosition = function(){
 
   this.X += this.Velocity.X;
   this.Y += this.Velocity.Y;
+  
+  if(this.X > max_X) { this.X = max_X; this.Velocity.X = 0; }
+  if(this.Y > max_Y) { this.Y = max_Y; this.Velocity.Y = 0; }
+  if(this.X < min_X) { this.X = min_X; this.Velocity.X = 0; }
+  if(this.Y < min_Y) { this.Y = min_Y; this.Velocity.Y = 0; }
 }
 
 SpaceObject.prototype.DistanceTo = function (so) {
