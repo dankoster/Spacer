@@ -10,11 +10,17 @@ function Game() {
            
   self.universe = new Universe();
   
-  var selectedObject = new SpaceObject('bluecircle', 100);
+  var selectedObject = new SpaceObject('bluecircle', 10000000000);
   //TODO: detect SVG objects and add them automatically...
+  //TODO: dynamically add SVG objects from the JavaScript
   self.universe.Add(selectedObject);
-  self.universe.Add(new SpaceObject('redcircle1', 60));
-  self.universe.Add(new SpaceObject('redcircle2', 60));
+  //self.universe.Add(new SpaceObject('orangecircle', 100));
+  self.universe.Add(new SpaceObject('redcircle1', 10));
+  self.universe.Add(new SpaceObject('redcircle2', 10));
+  self.universe.Add(new SpaceObject('redcircle3', 10));
+  self.universe.Add(new SpaceObject('redcircle4', 10));
+  self.universe.Add(new SpaceObject('redcircle5', 10));
+  self.universe.Add(new SpaceObject('redcircle6', 10));
   
   self.thrust = {
     U: new Vector(x=0, y=-.2),
