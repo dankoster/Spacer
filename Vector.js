@@ -1,4 +1,4 @@
-function Vector(x, y) {
+export function Vector(x, y) {
   
   //ensure new-agnostic construction
   var self = this instanceof Vector

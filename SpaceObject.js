@@ -1,4 +1,7 @@
-function SpaceObject(objID, mass) {
+import { Vector } from './Vector.js'
+import { Universe } from './Universe.js'
+
+export function SpaceObject(objID, mass) {
   
   //ensure new-agnostic construction
   var self = this instanceof SpaceObject
