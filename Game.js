@@ -1,7 +1,11 @@
 // <reference path="SpaceObject.js" />
 
+import { SpaceObject } from './SpaceObject.js'
+import { Universe } from './Universe.js'
+import { Vector } from './Vector.js'
+
 //https://developer.mozilla.org/en-US/docs/Games/Anatomy
-function Game() {
+export function Game() {
   
   //ensure new-agnostic construction
   var self = this instanceof Game
@@ -23,10 +27,10 @@ function Game() {
   self.universe.Add(new SpaceObject('redcircle6', 10));
   
   self.thrust = {
-    U: new Vector(x=0, y=-.2),
-    D: new Vector(x=0, y=.2),
-    L: new Vector(x=-.2, y=0),
-    R: new Vector(x=.2, y=0)
+    U: new Vector(0, .2),
+    D: new Vector(0, .2),
+    L: new Vector(-.2, 0),
+    R: new Vector(.2, 0)
   };
   
   document.addEventListener('keydown', (event) => {
@@ -95,6 +99,7 @@ function Game() {
 Game.prototype.render = function() {
   
   //TODO: separate rendering from calculating positions
-  this.universe.UpdatePositions(max_X = 1200, min_X = 0, max_Y = 700, min_Y = 0);
+  var max_X = 1200, min_X = 0, max_Y = 700, min_Y = 0
+  this.universe.UpdatePositions(max_X, min_X, max_Y, min_Y);
   
 }

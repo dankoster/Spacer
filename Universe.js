@@ -1,4 +1,7 @@
-function Universe() {
+import { SpaceObject } from './SpaceObject.js'
+import { Vector } from './Vector.js'
+
+export function Universe() {
   
   //ensure new-agnostic construction
   var self = this instanceof Universe
