@@ -21,26 +21,13 @@ Universe.prototype.Add = function(so) {
 
 Universe.prototype.UpdatePositions = function(max_X, min_X, max_Y, min_Y) {
   for(var o in this.Objects){
-    this.Objects[o].UpdatePosition(max_X, min_X, max_Y, min_Y);
+    this.Objects[o].CalculateNewPosition(max_X, min_X, max_Y, min_Y);
+  }
+
+  for(var o in this.Objects){
+    this.Objects[o].UpdatePosition();
   }
   
-  //calculate collisions
-  //http://gamedev.stackexchange.com/questions/27508/how-will-the-velocities-of-two-moving-objects-change-once-they-collide
-  //https://en.wikipedia.org/wiki/Collision
-  //https://en.wikipedia.org/wiki/Elastic_collision
-  //https://en.wikipedia.org/wiki/Coefficient_of_restitution
-  this.Collisions = {};
-  for(var a in this.Objects){
-    for(var b in this.Objects){
-      if(a != b){
-        var A = this.Objects[a];
-        var B = this.Objects[b];
-        if(A.DistanceTo(B) <= A.R + B.R){
-          this.Collisions[A.obj.id] = {A,B};
-        }
-      }
-    }
-  }
 }
 
 Universe.GetGravityVector = function(thisObject) {

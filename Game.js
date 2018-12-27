@@ -14,23 +14,16 @@ export function Game() {
            
   self.universe = new Universe();
   
-  var selectedObject = new SpaceObject('bluecircle', 10000000000);
-  //TODO: detect SVG objects and add them automatically...
   //TODO: dynamically add SVG objects from the JavaScript
+  var selectedObject = new SpaceObject('bluecircle', 1000);
   self.universe.Add(selectedObject);
-  //self.universe.Add(new SpaceObject('orangecircle', 100));
   self.universe.Add(new SpaceObject('redcircle1', 10));
-  self.universe.Add(new SpaceObject('redcircle2', 10));
-  self.universe.Add(new SpaceObject('redcircle3', 10));
-  self.universe.Add(new SpaceObject('redcircle4', 10));
-  self.universe.Add(new SpaceObject('redcircle5', 10));
-  self.universe.Add(new SpaceObject('redcircle6', 10));
   
   self.thrust = {
-    U: new Vector(0, .2),
-    D: new Vector(0, .2),
-    L: new Vector(-.2, 0),
-    R: new Vector(.2, 0)
+    U: new Vector({X:0, Y:-.2}),
+    D: new Vector({X:0, Y:.2}),
+    L: new Vector({X:-.2, Y:0}),
+    R: new Vector({X:.2, Y:0})
   };
   
   document.addEventListener('keydown', (event) => {
@@ -51,6 +44,14 @@ export function Game() {
       case 'ArrowRight':
         console.log(event.key);
         selectedObject.ThrustVectors.R = self.thrust.R;
+        break;
+      case 'Tab':
+        var i = self.universe.Objects.indexOf(selectedObject)
+        if (self.universe.Objects.length > i)
+          selectedObject = self.universe.Objects[i + 1]
+        else
+          selectedObject = self.uinverse.Objects[0]
+        console.log('Selected ' + i + ': ' + selectedObject.obj.id)
         break;
       // default:
       //   console.log(event.key);
