@@ -7,7 +7,7 @@
 
 <body>
     <div id="vueApp">
-        <svg v-bind:view-box.camel="viewBoxValue" fill="url(#grid)" xmlns="http://www.w3.org/2000/svg">
+        <svg id="svg" v-bind:view-box.camel="viewBoxValue" fill="url(#grid)" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
                     <path d="M 10 0 L 0 0 0 10" fill="none" stroke="gray" stroke-width="0.5" />
@@ -17,14 +17,17 @@
                     <path d="M 100 0 L 0 0 0 100" fill="none" stroke="gray" stroke-width="1" />
                 </pattern>
             </defs>
-            <line x1="0" y1="-10" x2="0" y2="10" stroke="red" />
-            <line x1="-10" y1="0" x2="10" y2="0" stroke="red" />
+            <!-- <line x1="0" y1="-10" x2="0" y2="10" stroke="red" />
+            <line x1="-10" y1="0" x2="10" y2="0" stroke="red" /> -->
             <rect width="100%" height="100%" fill="url(#grid)" />
-            <circle class="selected" cx="100" cy="200" r="5" fill="red" id="redcircle1" />
-            <circle cx="450" cy="300" r="20" fill="blue" id="bluecircle" />
+            <circle cx="125.1" cy="0" r="5" fill="red" id="redcircle1" />
+            <circle cx="100" cy="0" r="20" fill="blue" id="bluecircle" />
         </svg>
         <div>
             <input type="range" min="-100" max="100" step="1" v-model="minx">
+            <input type="range" min="-100" max="100" step="1" v-model="miny">
+            <input type="range" min="0" max="1000" step="1" v-model="width">
+            <input type="range" min="0" max="1000" step="1" v-model="height">
             <span v-text="viewBoxValue"><span>
         </div>
     </div>

@@ -8,7 +8,8 @@ export function Universe() {
            ? this
            : Object.create(Universe.prototype);
     
-  self.Objects = []; //a list of all the objects in the universe (so we can calculate gravity correctly)
+  self.Objects = [] //a list of all the objects in the universe (so we can calculate gravity correctly)
+  self.Vectors = []
 }
 
 Universe.prototype.Add = function(so) {

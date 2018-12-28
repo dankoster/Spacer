@@ -2,8 +2,8 @@ var app = new Vue({
 	el: '#vueApp',
 	data: {
 	  value: 50,
-	  minx: -100,
-	  miny: -100,
+	  minx: 0,
+	  miny: 0,
 	  width: 800,
 	  height: 600
 	},
