@@ -62,8 +62,17 @@ SpaceObject.prototype.CalculateNewPosition = function(max_X, min_X, max_Y, min_Y
         if (!this.collidingWith.includes(uo)) {
           this.collidingWith.push(uo)
           uo.collidingWith.push(this)
-          //this.Collide(uo)
           this.ResolveCollision(this, uo)
+        }
+        else
+        {
+          var gv = Universe.GetGravityVectorFromTo(this, uo)
+          var gvi = gv.Inverse()
+          // this.Velocity.X += gvi.X
+          // this.Velocity.Y += gvi.Y
+          this.newPos.X += gvi.X
+          this.newPos.Y += gvi.Y
+        
         }
       }
       else if(this.collidingWith.includes(uo))
@@ -125,7 +134,7 @@ SpaceObject.prototype.Collide = function (uo) {
   uo.Velocity = vB
 }
 
-SpaceObject.prototype.ResolveCollision = function(b1, b2) {
+SpaceObject.prototype.ResolveCollision = function(b1, b2, damper) {
   //https://stackoverflow.com/a/27016465
 
   var v1x = b1.Velocity.X,
@@ -135,7 +144,7 @@ SpaceObject.prototype.ResolveCollision = function(b1, b2) {
 
   // Collision vector
   var delta = {
-      x: b2.X- b1.X,
+      x: b2.X - b1.X,
       y: b2.Y - b1.Y
   };
   // var d = length(delta);
@@ -188,12 +197,14 @@ SpaceObject.prototype.ResolveCollision = function(b1, b2) {
   var newV1ProjN = ((m1 - m2) * v1Proj.n + 2 * m2 * v2Proj.n) / M;
   var newV2ProjN = ((m2 - m1)* v2Proj.n + 2 * m1 * v1Proj.n) / M;
 
-  // re-building speed vector out of projected vectors
-  b1.Velocity.X = newV1ProjN * dn.x + v1Proj.t * dt.x;
-  b1.Velocity.Y = newV1ProjN * dn.y + v1Proj.t * dt.y;
+  if(damper === undefined) damper = 1
 
-  b2.Velocity.X = newV2ProjN * dn.x + v2Proj.t * dt.x;
-  b2.Velocity.Y = newV2ProjN * dn.y + v2Proj.t * dt.y;
+  // re-building speed vector out of projected vectors
+  b1.Velocity.X = damper * (newV1ProjN * dn.x + v1Proj.t * dt.x);
+  b1.Velocity.Y = damper * (newV1ProjN * dn.y + v1Proj.t * dt.y);
+
+  b2.Velocity.X = damper * (newV2ProjN * dn.x + v2Proj.t * dt.x);
+  b2.Velocity.Y = damper * (newV2ProjN * dn.y + v2Proj.t * dt.y);
 }
 
 SpaceObject.prototype.DistanceTo = function (so) {

@@ -30,6 +30,9 @@ Universe.prototype.UpdatePositions = function(max_X, min_X, max_Y, min_Y) {
   
 }
 
+Universe.distanceMultiplier = 1
+Universe.G = 0.0000000000667400; //universal gravitational constant (doesn't actually matter so much unless we use real units and such for everything)
+
 Universe.GetGravityVector = function(thisObject) {
   if(!(thisObject instanceof SpaceObject)) throw 'unexpected type!';
   if(!thisObject.universe || !(thisObject.universe instanceof Universe)) throw 'object is not in a universe!'
@@ -40,29 +43,30 @@ Universe.GetGravityVector = function(thisObject) {
   
   var gravVector = new Vector(0,0);
   
-  if(thisObject.mass > 0){
-    var G = 0.0000000000667400; //universal gravitational constant (doesn't actually matter so much unless we use real units and such for everything)
-    var distMultiplier = 1;
-    var distance = 0;
-    var gravity;
-    
+  if(thisObject.mass > 0){    
     for(var so in thisObject.universe.Objects) {
       var otherObject = thisObject.universe.Objects[so];
-      
 			if(otherObject != thisObject && otherObject.mass !== 0)
-			{
-				distance = thisObject.DistanceTo(otherObject);
-				distance *= distMultiplier;
-				if(distance !== 0)
-				{
-					gravity = (G * thisObject.mass * otherObject.mass) / Math.pow(distance, 2.0);
-					gravVector.X += gravity * (otherObject.X - thisObject.X);
-					gravVector.Y += gravity * (otherObject.Y - thisObject.Y);
-				}
-			}
-
+			{      
+        var otherObjectGravVector = this.GetGravityVectorFromTo(thisObject, otherObject)
+        gravVector.X += otherObjectGravVector.X
+        gravVector.Y += otherObjectGravVector.Y
+      }
     }
   }
   
   return gravVector;
+}
+
+Universe.GetGravityVectorFromTo = function (thisObject, otherObject){
+  var result = new Vector(0,0)
+  var distance = thisObject.DistanceTo(otherObject) 
+  distance *= this.distanceMultiplier;
+  if(distance !== 0)
+  {
+    var gravity = (this.G * thisObject.mass * otherObject.mass) / Math.pow(distance, 2.0);
+    result.X += gravity * (otherObject.X - thisObject.X);
+    result.Y += gravity * (otherObject.Y - thisObject.Y);
+  }
+  return result
 }

@@ -5,7 +5,10 @@ var app = new Vue({
 	  minx: 0,
 	  miny: 0,
 	  width: 800,
-	  height: 600
+		height: 600,
+		perspectiveDistance: 100,
+		originX: 50,
+		originY: 50
 	},
 	computed: {
 		//usage  v-bind:view-box.camel="viewBoxValue"

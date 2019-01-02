@@ -50,7 +50,11 @@ Vector.prototype.GetUnitVector = function() {
 }
 
 Vector.prototype.GetTangentVector = function() {
-  return Vector.GetTangentVector(this);
+  return Vector.GetTangentVector(this)
+}
+
+Vector.prototype.Inverse = function() {
+  return Vector.Inverse(this)
 }
 
 Vector.Add = function(vector, value){
@@ -129,4 +133,8 @@ Vector.GetUnitNormalVector = function(v1, v2) {
 
 Vector.GetTangentVector = function(v) {
   return new Vector((v.Y * -1), v.X)
+}
+
+Vector.Inverse = function(v) {
+  return new Vector(v.X * -1, v.Y + -1)
 }

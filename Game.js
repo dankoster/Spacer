@@ -15,9 +15,9 @@ export function Game() {
   self.universe = new Universe();
 
   //TODO: dynamically add SVG objects from the JavaScript
-  var selectedObject = new SpaceObject('bluecircle', 500000);
+  var selectedObject = new SpaceObject('bluecircle', 50000);
   self.universe.Add(selectedObject);
-  self.universe.Add(new SpaceObject('redcircle1', 500));
+  self.universe.Add(new SpaceObject('redcircle1', 50000));
 
   self.thrust = {
     U: new Vector({ X: 0, Y: -.2 }),
