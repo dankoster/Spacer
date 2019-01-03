@@ -29,18 +29,26 @@ export function Game() {
   document.addEventListener('keydown', (event) => {
     //add temporary up/down/left/right vectors to the selected object
     switch (event.key) {
+      case 'w':
+      case 'W':
       case 'ArrowUp':
         console.log(event.key);
         selectedObject.ThrustVectors.U = self.thrust.U;
         break;
+      case 's':
+      case 'S':
       case 'ArrowDown':
         console.log(event.key);
         selectedObject.ThrustVectors.D = self.thrust.D;
         break;
+      case 'a':
+      case 'A':
       case 'ArrowLeft':
         console.log(event.key);
         selectedObject.ThrustVectors.L = self.thrust.L;
         break;
+      case 'd':
+      case 'D':
       case 'ArrowRight':
         console.log(event.key);
         selectedObject.ThrustVectors.R = self.thrust.R;
@@ -53,27 +61,35 @@ export function Game() {
           selectedObject = self.universe.Objects[0]
         console.log('Selected ' + i + ': ' + selectedObject.obj.id)
         break;
-      // default:
-      //   console.log(event.key);
-      //   break;
+      default:
+        console.log(event.key);
+        break;
     }
   }, false);
 
   document.addEventListener('keyup', (event) => {
     //remove temporary vector for the key
     switch (event.key) {
+      case 'w':
+      case 'W':
       case 'ArrowUp':
         console.log(event.key);
         selectedObject.ThrustVectors.U = undefined;
         break;
+      case 's':
+      case 'S':
       case 'ArrowDown':
         console.log(event.key);
         selectedObject.ThrustVectors.D = undefined;
         break;
+      case 'a':
+      case 'A':
       case 'ArrowLeft':
         console.log(event.key);
         selectedObject.ThrustVectors.L = undefined;
         break;
+      case 'd':
+      case 'D':
       case 'ArrowRight':
         console.log(event.key);
         selectedObject.ThrustVectors.R = undefined;
@@ -103,20 +119,24 @@ Game.prototype.render = function () {
   var max_X = 800, min_X = 0, max_Y = 600, min_Y = 0
   this.universe.UpdatePositions(max_X, min_X, max_Y, min_Y);
 
+  this.RenderVectors()
+}
+
+Game.prototype.RenderVectors = function() {
   this.universe.Vectors.forEach(v => {
     if (!v.id) {
       v.id = Date.now()
       var svg = document.getElementsByTagName('svg')[0]
       var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
-      newElement.setAttribute("name", v.name); 
-      newElement.setAttribute("id", v.id); 
-      newElement.setAttribute("x1", 0); 
-      newElement.setAttribute("y1", 0); 
-      newElement.setAttribute("x2", v.vector.X * 10); 
-      newElement.setAttribute("y2", v.vector.Y * 10); 
+      newElement.setAttribute("name", v.name);
+      newElement.setAttribute("id", v.id);
+      newElement.setAttribute("x1", 0);
+      newElement.setAttribute("y1", 0);
+      newElement.setAttribute("x2", v.vector.X * 10);
+      newElement.setAttribute("y2", v.vector.Y * 10);
       newElement.style.stroke = "red"; //Set stroke colour
       newElement.style.strokeWidth = "1px"; //Set stroke width
       svg.appendChild(newElement);
     }
-  });
+  })
 }
