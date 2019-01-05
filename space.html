@@ -17,13 +17,16 @@
                         <rect width="100" height="100" fill="url(#smallGrid)" />
                         <path d="M 100 0 L 0 0 0 100" fill="none" stroke="gray" stroke-width="1" />
                     </pattern>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#f00" />
+                    </marker>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#grid)" />
                 <circle cx="125.1" cy="80" r="20" fill="red" id="redcircle1" />
-                <circle cx="100" cy="200" r="20" fill="blue" id="bluecircle" />
+                <circle cx="400" cy="300" r="100" fill="blue" id="bluecircle" />
             </svg>
         </div>
-        <div>
+        <!-- <div>
             <input type="range" min="-100" max="100" step="1" v-model="minx">
             <input type="range" min="-100" max="100" step="1" v-model="miny">
             <input type="range" min="0" max="1000" step="1" v-model="width">
@@ -49,7 +52,7 @@
                     <input v-model="originY" class="origin-y-range" type="range" min="0" max="100" value="50" data-units="%" />
                 </label>
             </p>
-        </div>
+        </div> -->
     </div>
     <script type="text/javascript" src="vue.js"></script>
     <script type="text/javascript" src="vueApp.js"></script>

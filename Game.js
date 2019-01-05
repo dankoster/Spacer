@@ -15,9 +15,9 @@ export function Game() {
   self.universe = new Universe();
 
   //TODO: dynamically add SVG objects from the JavaScript
-  var selectedObject = new SpaceObject('bluecircle', 50000);
+  var selectedObject = new SpaceObject('bluecircle', 5000000);
   self.universe.Add(selectedObject);
-  self.universe.Add(new SpaceObject('redcircle1', 50000));
+  self.universe.Add(new SpaceObject('redcircle1', 5000));
 
   self.thrust = {
     U: new Vector({ X: 0, Y: -.2 }),
@@ -32,25 +32,21 @@ export function Game() {
       case 'w':
       case 'W':
       case 'ArrowUp':
-        console.log(event.key);
         selectedObject.ThrustVectors.U = self.thrust.U;
         break;
       case 's':
       case 'S':
       case 'ArrowDown':
-        console.log(event.key);
         selectedObject.ThrustVectors.D = self.thrust.D;
         break;
       case 'a':
       case 'A':
       case 'ArrowLeft':
-        console.log(event.key);
         selectedObject.ThrustVectors.L = self.thrust.L;
         break;
       case 'd':
       case 'D':
       case 'ArrowRight':
-        console.log(event.key);
         selectedObject.ThrustVectors.R = self.thrust.R;
         break;
       case 'Tab':
@@ -73,25 +69,21 @@ export function Game() {
       case 'w':
       case 'W':
       case 'ArrowUp':
-        console.log(event.key);
         selectedObject.ThrustVectors.U = undefined;
         break;
       case 's':
       case 'S':
       case 'ArrowDown':
-        console.log(event.key);
         selectedObject.ThrustVectors.D = undefined;
         break;
       case 'a':
       case 'A':
       case 'ArrowLeft':
-        console.log(event.key);
         selectedObject.ThrustVectors.L = undefined;
         break;
       case 'd':
       case 'D':
       case 'ArrowRight':
-        console.log(event.key);
         selectedObject.ThrustVectors.R = undefined;
         break;
       // default:
@@ -105,7 +97,7 @@ export function Game() {
 
     //Call your update method. In our case, we give it requestAnimationFrame's timestamp.
     // self.update(tFrame);
-    self.render();
+    self.render(tFrame);
   }
 }
 
@@ -113,8 +105,8 @@ export function Game() {
 //   console.log(tFrame); 
 // }
 
-Game.prototype.render = function () {
-
+Game.prototype.render = function (frame) {
+  //console.log('render')
   //TODO: separate rendering from calculating positions
   var max_X = 800, min_X = 0, max_Y = 600, min_Y = 0
   this.universe.UpdatePositions(max_X, min_X, max_Y, min_Y);
@@ -128,15 +120,27 @@ Game.prototype.RenderVectors = function() {
       v.id = Date.now()
       var svg = document.getElementsByTagName('svg')[0]
       var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
-      newElement.setAttribute("name", v.name);
+      if(v.name) newElement.setAttribute("name", v.name);
       newElement.setAttribute("id", v.id);
-      newElement.setAttribute("x1", 0);
-      newElement.setAttribute("y1", 0);
-      newElement.setAttribute("x2", v.vector.X * 10);
-      newElement.setAttribute("y2", v.vector.Y * 10);
-      newElement.style.stroke = "red"; //Set stroke colour
+      newElement.setAttribute("x1", v.position.X);
+      newElement.setAttribute("y1", v.position.Y);
+      newElement.setAttribute("x2", v.position.X + (v.vector.X * 100));
+      newElement.setAttribute("y2", v.position.Y + (v.vector.Y * 100));
+      newElement.setAttribute("marker-end", "url(#arrow)")
+      newElement.style.strokeWidth = "5"
+      newElement.style.stroke = v.obj.attributes["fill"].value; //Set stroke colour
       newElement.style.strokeWidth = "1px"; //Set stroke width
       svg.appendChild(newElement);
+    }
+    else if(Date.now() - v.id > 5000) 
+    {
+      //remove old lines
+      var line = document.getElementById(v.id)
+      if(line) {
+        const index = this.universe.Vectors.indexOf(v)
+        this.universe.Vectors.splice(index, 1)
+        line.parentNode.removeChild(line)
+      }
     }
   })
 }

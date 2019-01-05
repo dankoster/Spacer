@@ -10,33 +10,83 @@ export class SpaceObject {
     this.ThrustVectors = {}
     this.collidingWith = []
 
+    //an anynonymous class... whaaaaat!
+    this.position =  new class {
+      constructor(v) { this.p = v }
+      get X() { return this.p.X }
+      set X(value) { this.p.X = value }
+      get Y() { return this.p.Y }
+      set Y(value) { this.p.Y = value }
+    }(this)
+
+    this.newPos = {
+      X: undefined,
+      Y: undefined
+    }
+
     //check for proper initialization
     if (!this.obj)
       throw objID + ' not recognized as a valid element';
   }
 
-  CalculateNewPosition(max_X, min_X, max_Y, min_Y) {
+  get X() { return parseFloat(this.obj.getAttribute('cx')); }
+  set X(value) { if (value) this.obj.setAttribute('cx', value); }
 
-    //This is where the thing is rendered onscreen
-    var curPos = {
-      X: this.X,
-      Y: this.Y
+  get Y() { return parseFloat(this.obj.getAttribute('cy')); }
+  set Y(value) { if (value) this.obj.setAttribute('cy', value); }
+
+  //Radius!
+  //<circle cx="100" cy="200" r="5" fill="red" id="redcircle1" />
+  get R() { return parseFloat(this.obj.getAttribute('r')); }
+  set R(value) { if (value) this.obj.setAttribute('r', value); }
+
+  get mass() { return this._mass; }
+  set mass(value) { this._mass = value; }
+
+  get hasNewPosition() {
+    return this.newPos.X != this.X || this.newPos.Y != this.Y
+  }
+
+  get totalAcceleration() {
+    var forces = [];
+    var accelerationDueToGravity = Universe.GetGravityVector(this);
+    forces.push(accelerationDueToGravity);
+
+    for (var t in this.ThrustVectors) {
+      if (this.ThrustVectors[t]) forces.push(this.ThrustVectors[t]);
     }
+
+    var totalAcceleration = Vector.GetResultVector(forces);
+    return totalAcceleration;
+  }
+
+  static DistanceBetween(a, b) {
+    return Math.sqrt(((b.X - a.X) * (b.X - a.X)) + ((b.Y - a.Y) * (b.Y - a.Y)));
+  }
+
+  DistanceTo(so) {
+    return SpaceObject.DistanceBetween(this, so)
+  }
+
+  UpdatePosition() {
+    this.X = this.newPos.X;
+    this.Y = this.newPos.Y;
+  }
+
+  CalculateNewPosition(max_X, min_X, max_Y, min_Y) {
 
     //Have to calculate the new position separately from the thix.X and this.Y
     // because changes to those don't take effect until the page is rendered
-    this.newPos = {
-      X: curPos.X,
-      Y: curPos.Y
-    }
+    this.newPos.X = this.position.X
+    this.newPos.Y = this.position.Y
 
     this.Velocity = this.Velocity.Add(this.totalAcceleration);
 
     //have made it outside the boundaries?
-    var overX = curPos.X >= max_X;
-    var overY = curPos.Y >= max_Y;
-    var undrX = curPos.X <= min_X;
-    var undrY = curPos.Y <= min_Y;
+    var overX = this.position.X >= max_X;
+    var overY = this.position.Y >= max_Y;
+    var undrX = this.position.X <= min_X;
+    var undrY = this.position.Y <= min_Y;
 
     //constrain velocity at the boundaries
     if (overX || undrX) { this.Velocity.X *= -1; this.Velocity.X *= 0.15; }
@@ -52,21 +102,33 @@ export class SpaceObject {
     for (var o in this.universe.Objects) {
       var uo = this.universe.Objects[o]
       if (uo != this) {
-        if (this.DistanceTo(uo) <= this.R + uo.R) {
+        let distance = this.DistanceTo(uo)
+        let overlap = distance - this.R - uo.R;
+        if (overlap < 1) {
 
           if (!this.collidingWith.includes(uo)) {
+            //console.log({thing: this.obj, collidingWith: uo.obj})
             this.collidingWith.push(uo)
             uo.collidingWith.push(this)
-            this.ResolveCollision(this, uo)
+            this.ResolveCollision(this, uo) //, 0.85)
           }
-          else {
+          else if(!this.hasNewPosition) {
+            //haven't calculated a new position for this yet but it's overlapping the other thing
+            // so displace it away from the other thing along an inverse of the gravity vector
+            // by the amount of the overlap
             var gv = Universe.GetGravityVectorFromTo(this, uo)
             var gvi = gv.Inverse()
-            // this.Velocity.X += gvi.X
-            // this.Velocity.Y += gvi.Y
-            this.newPos.X += gvi.X
-            this.newPos.Y += gvi.Y
+            var gviu = gvi.GetUnitVector()
+            var displacement = gviu.Multiply(Math.abs(overlap * 2))
+            this.newPos.X += displacement.X
+            this.newPos.Y += displacement.Y
 
+            //console.log({thing: this.obj, overlap})
+            //this.universe.Vectors.push({vector: displacement, obj: this.obj, position: { X: this.position.X, Y: this.position.Y}})
+          }
+          else
+          {
+            console.log(overlap)
           }
         }
         else if (this.collidingWith.includes(uo))
@@ -79,11 +141,7 @@ export class SpaceObject {
     this.newPos.Y += this.Velocity.Y;
   }
 
-  UpdatePosition() {
-    this.X = this.newPos.X;
-    this.Y = this.newPos.Y;
-  }
-
+  //directly changes velocity of b1 and b2
   ResolveCollision(b1, b2, damper) {
     //https://stackoverflow.com/a/27016465
 
@@ -156,39 +214,4 @@ export class SpaceObject {
     b2.Velocity.X = damper * (newV2ProjN * dn.x + v2Proj.t * dt.x);
     b2.Velocity.Y = damper * (newV2ProjN * dn.y + v2Proj.t * dt.y);
   }
-
-  static DistanceBetween(a, b) {
-    return Math.sqrt(((b.X - a.X) * (b.X - a.X)) + ((b.Y - a.Y) * (b.Y - a.Y)));
-  }
-
-  DistanceTo(so) {
-    return SpaceObject.DistanceBetween(this, so)
-  }
-
-  get totalAcceleration() {
-    var forces = [];
-    var accelerationDueToGravity = Universe.GetGravityVector(this);
-    forces.push(accelerationDueToGravity);
-
-    for (var t in this.ThrustVectors) {
-      if (this.ThrustVectors[t]) forces.push(this.ThrustVectors[t]);
-    }
-
-    var totalAcceleration = Vector.GetResultVector(forces);
-    return totalAcceleration;
-  }
-
-  get X() { return parseFloat(this.obj.getAttribute('cx')); }
-  set X(value) { if (value) this.obj.setAttribute('cx', value); }
-
-  get Y() { return parseFloat(this.obj.getAttribute('cy')); }
-  set Y(value) { if (value) this.obj.setAttribute('cy', value); }
-
-  //Radius!
-  //<circle cx="100" cy="200" r="5" fill="red" id="redcircle1" />
-  get R() { return parseFloat(this.obj.getAttribute('r')); }
-  set R(value) { if (value) this.obj.setAttribute('r', value); }
-
-  get mass() { return this._mass; }
-  set mass(value) { this._mass = value; }
 }

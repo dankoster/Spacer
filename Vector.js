@@ -136,5 +136,5 @@ Vector.GetTangentVector = function(v) {
 }
 
 Vector.Inverse = function(v) {
-  return new Vector(v.X * -1, v.Y + -1)
+  return new Vector(v.X * -1, v.Y * -1)
 }
