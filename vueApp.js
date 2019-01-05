@@ -1,3 +1,5 @@
+import { Game } from './Game.js'
+
 var app = new Vue({
 	el: '#vueApp',
 	data: {
@@ -15,5 +17,10 @@ var app = new Vue({
 		viewBoxValue: function () {
 		return `${this.minx} ${this.miny} ${this.width} ${this.height}`
 	  }
-	}
+	},
+	methods: {
+    addOne: function (event) {
+      Game.test()
+    }
+  }
   });
