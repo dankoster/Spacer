@@ -32,21 +32,25 @@ export function Game() {
       case 'w':
       case 'W':
       case 'ArrowUp':
+      case 'UIKeyInputUpArrow':
         selectedObject.ThrustVectors.U = self.thrust.U;
         break;
       case 's':
       case 'S':
       case 'ArrowDown':
+      case 'UIKeyInputDownArrow':
         selectedObject.ThrustVectors.D = self.thrust.D;
         break;
       case 'a':
       case 'A':
       case 'ArrowLeft':
+      case 'UIKeyInputLeftArrow':
         selectedObject.ThrustVectors.L = self.thrust.L;
         break;
       case 'd':
       case 'D':
       case 'ArrowRight':
+      case 'UIKeyInputRightArrow':
         selectedObject.ThrustVectors.R = self.thrust.R;
         break;
       case 'Tab':
@@ -69,21 +73,25 @@ export function Game() {
       case 'w':
       case 'W':
       case 'ArrowUp':
+      case 'UIKeyInputUpArrow':
         selectedObject.ThrustVectors.U = undefined;
         break;
       case 's':
       case 'S':
       case 'ArrowDown':
+      case 'UIKeyInputDownArrow':
         selectedObject.ThrustVectors.D = undefined;
         break;
       case 'a':
       case 'A':
       case 'ArrowLeft':
+      case 'UIKeyInputLeftArrow':
         selectedObject.ThrustVectors.L = undefined;
         break;
       case 'd':
       case 'D':
       case 'ArrowRight':
+      case 'UIKeyInputRightArrow':
         selectedObject.ThrustVectors.R = undefined;
         break;
       // default:
@@ -99,6 +107,11 @@ export function Game() {
     // self.update(tFrame);
     self.render(tFrame);
   }
+  
+}
+
+Game.prototype.test = function() {
+	alert('Hello game!')
 }
 
 // Game.prototype.update = function(tFrame) {
