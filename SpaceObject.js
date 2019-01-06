@@ -9,6 +9,7 @@ export class SpaceObject {
     this.Velocity = new Vector(0, 0)
     this.ThrustVectors = {}
     this.collidingWith = []
+    this.universe = undefined
 
     //an anynonymous class... whaaaaat!
     this.position =  new class {
@@ -49,7 +50,7 @@ export class SpaceObject {
 
   get totalAcceleration() {
     var forces = [];
-    var accelerationDueToGravity = Universe.GetGravityVector(this);
+    var accelerationDueToGravity = this.universe.GetGravityVector(this);
     forces.push(accelerationDueToGravity);
 
     for (var t in this.ThrustVectors) {
@@ -116,7 +117,7 @@ export class SpaceObject {
             //haven't calculated a new position for this yet but it's overlapping the other thing
             // so displace it away from the other thing along an inverse of the gravity vector
             // by the amount of the overlap
-            var gv = Universe.GetGravityVectorFromTo(this, uo)
+            var gv = this.universe.GetGravityVectorFromTo(this, uo)
             var gvi = gv.Inverse()
             var gviu = gvi.GetUnitVector()
             var displacement = gviu.Multiply(Math.abs(overlap * 2))

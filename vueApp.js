@@ -1,4 +1,4 @@
-import { Game } from './Game.js'
+import { Game, StartGameLoop } from './Game.js'
 
 var app = new Vue({
 	el: '#vueApp',
@@ -14,8 +14,8 @@ var app = new Vue({
 		originY: 50
 	},
 	mounted: function () {
-		this.game = new Game();
-		this.game.mainLoop(); // Start the game loop
+		this.game = new Game()
+		StartGameLoop(this.game)
 	},
 	computed: {
 		//usage  v-bind:view-box.camel="viewBoxValue"
