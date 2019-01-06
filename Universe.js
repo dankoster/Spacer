@@ -21,11 +21,9 @@ export class Universe {
     for (var o in this.Objects) {
       this.Objects[o].CalculateNewPosition(max_X, min_X, max_Y, min_Y);
     }
-
     for (var o in this.Objects) {
       this.Objects[o].UpdatePosition();
     }
-
   }
 
   GetGravityVector(thisObject) {
@@ -58,8 +56,8 @@ export class Universe {
     distance *= this.distanceMultiplier;
     if (distance !== 0) {
       var gravity = (this.G * thisObject.mass * otherObject.mass) / Math.pow(distance, 2.0);
-      result.X += gravity * (otherObject.X - thisObject.X);
-      result.Y += gravity * (otherObject.Y - thisObject.Y);
+      result.X += gravity * (otherObject.position.X - thisObject.position.X);
+      result.Y += gravity * (otherObject.position.Y - thisObject.position.Y);
     }
     return result
   }

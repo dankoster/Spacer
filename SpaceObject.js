@@ -1,51 +1,38 @@
 import { Vector } from './Vector.js'
-import { Universe } from './Universe.js'
+
+export class Position {
+  constructor({X,Y}){
+    this.X = X
+    this.Y = Y
+  }
+  get X() {return this.x}
+  set X(value) {
+    if(value === 0 || value) this.x = value
+    else throw `invalid X value: ${value}`
+  }
+  get Y() {return this.y}
+  set Y(value) {
+    if(value === 0 || value) this.y = value
+    else throw `invalid Y value: ${value}`
+  }
+}
 
 export class SpaceObject {
 
-  constructor(objID, mass) {
-    this.obj = document.getElementById(objID)
+  constructor({X, Y, R, mass}) {
+    this.id = Date.now()
     this.mass = mass
     this.Velocity = new Vector(0, 0)
     this.ThrustVectors = {}
     this.collidingWith = []
     this.universe = undefined
-
-    //an anynonymous class... whaaaaat!
-    this.position =  new class {
-      constructor(v) { this.p = v }
-      get X() { return this.p.X }
-      set X(value) { this.p.X = value }
-      get Y() { return this.p.Y }
-      set Y(value) { this.p.Y = value }
-    }(this)
-
-    this.newPos = {
-      X: undefined,
-      Y: undefined
-    }
-
-    //check for proper initialization
-    if (!this.obj)
-      throw objID + ' not recognized as a valid element';
+    this.radius = R 
+    this.position = new Position({ X, Y })
+    this.newPos = new Position({ X, Y })
   }
 
-  get X() { return parseFloat(this.obj.getAttribute('cx')); }
-  set X(value) { if (value) this.obj.setAttribute('cx', value); }
-
-  get Y() { return parseFloat(this.obj.getAttribute('cy')); }
-  set Y(value) { if (value) this.obj.setAttribute('cy', value); }
-
-  //Radius!
-  //<circle cx="100" cy="200" r="5" fill="red" id="redcircle1" />
-  get R() { return parseFloat(this.obj.getAttribute('r')); }
-  set R(value) { if (value) this.obj.setAttribute('r', value); }
-
-  get mass() { return this._mass; }
-  set mass(value) { this._mass = value; }
-
   get hasNewPosition() {
-    return this.newPos.X != this.X || this.newPos.Y != this.Y
+    return this.newPos.X != this.position.X || this.newPos.Y != this.position.Y
   }
 
   get totalAcceleration() {
@@ -66,12 +53,12 @@ export class SpaceObject {
   }
 
   DistanceTo(so) {
-    return SpaceObject.DistanceBetween(this, so)
+    return SpaceObject.DistanceBetween(this.position, so.position)
   }
 
   UpdatePosition() {
-    this.X = this.newPos.X;
-    this.Y = this.newPos.Y;
+    this.position.X = this.newPos.X;
+    this.position.Y = this.newPos.Y;
   }
 
   CalculateNewPosition(max_X, min_X, max_Y, min_Y) {
@@ -104,7 +91,7 @@ export class SpaceObject {
       var uo = this.universe.Objects[o]
       if (uo != this) {
         let distance = this.DistanceTo(uo)
-        let overlap = distance - this.R - uo.R;
+        let overlap = distance - this.radius - uo.radius;
         if (overlap < 1) {
 
           if (!this.collidingWith.includes(uo)) {
@@ -129,7 +116,7 @@ export class SpaceObject {
           }
           else
           {
-            console.log(overlap)
+            //console.log(overlap)
           }
         }
         else if (this.collidingWith.includes(uo))
@@ -153,8 +140,8 @@ export class SpaceObject {
 
     // Collision vector
     var delta = {
-      x: b2.X - b1.X,
-      y: b2.Y - b1.Y
+      x: b2.position.X - b1.position.X,
+      y: b2.position.Y - b1.position.Y
     };
     // var d = length(delta);
     var d = Math.sqrt(delta.x * delta.x + delta.y * delta.y)

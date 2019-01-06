@@ -1,13 +1,14 @@
 import { SpaceObject } from './SpaceObject.js'
 import { Universe } from './Universe.js'
 import { Vector } from './Vector.js'
+import { limitedRandom } from './utility.js'
 
 export function StartGameLoop(game) {
   var loop = function (tFrame) {
     game.render(tFrame)
     window.requestAnimationFrame(loop)
   }
-  window.requestAnimationFrame(loop)  
+  window.requestAnimationFrame(loop)
 }
 
 //https://developer.mozilla.org/en-US/docs/Games/Anatomy
@@ -15,10 +16,6 @@ export class Game {
   constructor() {
 
     this.universe = new Universe();
-
-    //TODO: dynamically add SVG objects from the JavaScript
-    var selectedObject = new SpaceObject('bluecircle', 100000);
-    this.universe.Add(selectedObject);
 
     this.max_X = 800
     this.min_X = 0
@@ -109,24 +106,12 @@ export class Game {
   }
 
   test() {
-
-    function random(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
-    var id = Date.now()
-    //<circle cx="125.1" cy="80" r="20" fill="red" id="redcircle1" />
-
-    var svg = document.getElementsByTagName('svg')[0]
-    var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); //Create a path in SVG's namespace
-    newElement.setAttribute("id", id)
-    newElement.setAttribute("cx", random(20, 800))
-    newElement.setAttribute("cy", random(0, 600))
-    newElement.setAttribute("r", 15)
-    newElement.setAttribute("fill", "red")
-    svg.appendChild(newElement)
-
-    var so = new SpaceObject(id, 50000)
+    var so = new SpaceObject({
+      X: limitedRandom(20, 800),
+      Y: limitedRandom(20, 600),
+      R: 15,
+      mass: 50000
+    })
     this.universe.Add(so)
   }
 
