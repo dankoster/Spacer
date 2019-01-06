@@ -15,7 +15,8 @@ export function StartGameLoop(game) {
 export class Game {
   constructor() {
 
-    this.universe = new Universe();
+    this.universe = new Universe()
+    this.selectedObject = undefined
 
     this.max_X = 800
     this.min_X = 0
@@ -30,39 +31,43 @@ export class Game {
     };
 
     document.addEventListener('keydown', (event) => {
+
+      if (!this.selectedObject && this.universe.Objects.length)
+        this.selectedObject = this.universe.Objects[0]
+
       //add temporary up/down/left/right vectors to the selected object
       switch (event.key) {
         case 'w':
         case 'W':
         case 'ArrowUp':
         case 'UIKeyInputUpArrow':
-          selectedObject.ThrustVectors.U = this.thrust.U;
+          this.selectedObject.ThrustVectors.U = this.thrust.U;
           break;
         case 's':
         case 'S':
         case 'ArrowDown':
         case 'UIKeyInputDownArrow':
-          selectedObject.ThrustVectors.D = this.thrust.D;
+          this.selectedObject.ThrustVectors.D = this.thrust.D;
           break;
         case 'a':
         case 'A':
         case 'ArrowLeft':
         case 'UIKeyInputLeftArrow':
-          selectedObject.ThrustVectors.L = this.thrust.L;
+          this.selectedObject.ThrustVectors.L = this.thrust.L;
           break;
         case 'd':
         case 'D':
         case 'ArrowRight':
         case 'UIKeyInputRightArrow':
-          selectedObject.ThrustVectors.R = this.thrust.R;
+          this.selectedObject.ThrustVectors.R = this.thrust.R;
           break;
         case 'Tab':
-          var i = this.universe.Objects.indexOf(selectedObject)
+          var i = this.universe.Objects.indexOf(this.selectedObject)
           if (this.universe.Objects.length - 1 > i)
-            selectedObject = this.universe.Objects[i + 1]
+            this.selectedObject = this.universe.Objects[i + 1]
           else
-            selectedObject = this.universe.Objects[0]
-          console.log('Selected ' + i + ': ' + selectedObject.obj.id)
+            this.selectedObject = this.universe.Objects[0]
+          console.log('Selected ' + i + ': ' + this.selectedObject.obj.id)
           break;
         default:
           console.log(event.key);
@@ -77,25 +82,25 @@ export class Game {
         case 'W':
         case 'ArrowUp':
         case 'UIKeyInputUpArrow':
-          selectedObject.ThrustVectors.U = undefined;
+          this.selectedObject.ThrustVectors.U = undefined;
           break;
         case 's':
         case 'S':
         case 'ArrowDown':
         case 'UIKeyInputDownArrow':
-          selectedObject.ThrustVectors.D = undefined;
+          this.selectedObject.ThrustVectors.D = undefined;
           break;
         case 'a':
         case 'A':
         case 'ArrowLeft':
         case 'UIKeyInputLeftArrow':
-          selectedObject.ThrustVectors.L = undefined;
+          this.selectedObject.ThrustVectors.L = undefined;
           break;
         case 'd':
         case 'D':
         case 'ArrowRight':
         case 'UIKeyInputRightArrow':
-          selectedObject.ThrustVectors.R = undefined;
+          this.selectedObject.ThrustVectors.R = undefined;
           break;
         // default:
         //   console.log(event.key);
