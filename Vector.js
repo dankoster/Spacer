@@ -17,6 +17,9 @@ export class Vector {
     return Math.sqrt((this.X * this.X) + (this.Y * this.Y))
   }
 
+  get Inverse() { return this.GetInverse() }
+  get Unit() { return this.GetUnitVector() }
+
   Add(value) { return Vector.Add(this, value) }
   Subtract(value) { return Vector.Subtract(this, value) }
   Multiply(value) { return Vector.Multiply(this, value) }
@@ -24,7 +27,7 @@ export class Vector {
   DotProduct(v) { return Vector.DotProduct(this, v) }
   GetUnitVector() { return Vector.GetUnitVector(this) }
   GetTangentVector() { return Vector.GetTangentVector(this) }
-  Inverse() { return Vector.Inverse(this) }
+  GetInverse() { return Vector.GetInverse(this) }
 
   static Add(vector, value) {
     if (value instanceof Vector) {
@@ -104,7 +107,7 @@ export class Vector {
     return new Vector((v.Y * -1), v.X)
   }
 
-  static Inverse(v) {
+  static GetInverse(v) {
     return new Vector(v.X * -1, v.Y * -1)
   }
 }

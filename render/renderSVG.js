@@ -11,7 +11,7 @@ export class renderSVG {
 	render() {
 		this.game.universe.Objects.forEach(so => {
 			if (!this.renderItems[so.id]) {
-				var newItem = new circle(so)
+				var newItem = new circle({so, fill: so.id > 0 ? 'red' : 'blue'})
 				this.renderItems[so.id] = newItem
 				this.svg.appendChild(newItem.element)
 			}
@@ -33,7 +33,7 @@ export class rendered {
 
 export class circle extends rendered {
 	//<circle cx="100" cy="200" r="5" fill="red" id="redcircle1" />
-	constructor(so, fill = 'red') {
+	constructor({so, fill = 'red'}) {
 		var e = circle.createElement({
 			id: so.id,
 			x: so.position.X,
@@ -60,7 +60,7 @@ export class circle extends rendered {
 		e.setAttribute("cx", x)
 		e.setAttribute("cy", y)
 		e.setAttribute("r", r)
-		e.setAttribute("fill", "red")
+		e.setAttribute("fill", fill)
 		return e
 	}
 

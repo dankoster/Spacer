@@ -21,20 +21,21 @@
                         <path d="M0,0 L0,6 L9,3 z" fill="#f00" />
                     </marker>
                 </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
+                <rect width="500%" height="500%" fill="url(#grid)" />
             </svg>
         </div>
         <div>
-        	<button v-on:click="addOne">Add one</button>
+            <button v-on:click="addOne">Add one</button>
+            <button v-on:click="freeze">Freeze and center</button>
         </div>
-        <!-- <div>
-            <input type="range" min="-100" max="100" step="1" v-model="minx">
-            <input type="range" min="-100" max="100" step="1" v-model="miny">
+        <div>
+            <input type="range" min="-100" max="1000" step="1" v-model="minx">
+            <input type="range" min="-100" max="1000" step="1" v-model="miny">
             <input type="range" min="0" max="1000" step="1" v-model="width">
             <input type="range" min="0" max="1000" step="1" v-model="height">
             <span v-text="viewBoxValue"><span>
         </div>
-        <div>
+        <!-- <div>
             <p>
                 <label>
                     perspective

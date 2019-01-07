@@ -67,7 +67,7 @@ export class Game {
             this.selectedObject = this.universe.Objects[i + 1]
           else
             this.selectedObject = this.universe.Objects[0]
-          console.log('Selected ' + i + ': ' + this.selectedObject.obj.id)
+          console.log('Selected ' + i + ': ' + this.selectedObject.id)
           break;
         default:
           console.log(event.key);
@@ -111,48 +111,63 @@ export class Game {
   }
 
   test() {
-    var so = new SpaceObject({
-      X: limitedRandom(20, 800),
-      Y: limitedRandom(20, 600),
+    this.universe.Add(new SpaceObject({
+      X: 400,
+      Y: 100,
       R: 15,
-      mass: 50000
+      mass: 50000,
+      id: this.universe.Objects.length
+    }))
+    
+    this.universe.Add(new SpaceObject({
+      X: 400,
+      Y: 200,
+      R: 15,
+      mass: 50000,
+      id: this.universe.Objects.length
+    }))
+  }
+
+  freeze() {
+    this.universe.Objects.forEach(so => {
+      so.Velocity = new Vector(0,0)
+      so.newPos.X = 400
     })
-    this.universe.Add(so)
   }
 
   render(frame) {
     this.universe.UpdatePositions(this.max_X, this.min_X, this.max_Y, this.min_Y);
 
-    this.RenderVectors()
+    // this.RenderVectors()
   }
 
-  RenderVectors() {
-    this.universe.Vectors.forEach(v => {
-      if (!v.id) {
-        v.id = Date.now()
-        var svg = document.getElementsByTagName('svg')[0]
-        var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
-        if (v.name) newElement.setAttribute("name", v.name);
-        newElement.setAttribute("id", v.id);
-        newElement.setAttribute("x1", v.position.X);
-        newElement.setAttribute("y1", v.position.Y);
-        newElement.setAttribute("x2", v.position.X + (v.vector.X * 100));
-        newElement.setAttribute("y2", v.position.Y + (v.vector.Y * 100));
-        newElement.setAttribute("marker-end", "url(#arrow)")
-        newElement.style.strokeWidth = "5"
-        newElement.style.stroke = v.obj.attributes["fill"].value; //Set stroke colour
-        newElement.style.strokeWidth = "1px"; //Set stroke width
-        svg.appendChild(newElement);
-      }
-      else if (Date.now() - v.id > 5000) {
-        //remove old lines
-        var line = document.getElementById(v.id)
-        if (line) {
-          const index = this.universe.Vectors.indexOf(v)
-          this.universe.Vectors.splice(index, 1)
-          line.parentNode.removeChild(line)
-        }
-      }
-    })
-  }
+  // RenderVectors() {
+  //   this.universe.Vectors.forEach(v => {
+  //     if (!v.id) {
+  //       v.id = Date.now()
+  //       var svg = document.getElementsByTagName('svg')[0]
+  //       var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
+  //       if (v.name) newElement.setAttribute("name", v.name);
+  //       newElement.setAttribute("id", v.id);
+  //       newElement.setAttribute("x1", v.position.X);
+  //       newElement.setAttribute("y1", v.position.Y);
+  //       newElement.setAttribute("x2", v.position.X + (v.vector.X * 100));
+  //       newElement.setAttribute("y2", v.position.Y + (v.vector.Y * 100));
+  //       newElement.setAttribute("marker-end", "url(#arrow)")
+  //       newElement.style.strokeWidth = "5"
+  //       newElement.style.stroke = v.obj.attributes["fill"].value; //Set stroke colour
+  //       newElement.style.strokeWidth = "1px"; //Set stroke width
+  //       svg.appendChild(newElement);
+  //     }
+  //     else if (Date.now() - v.id > 5000) {
+  //       //remove old lines
+  //       var line = document.getElementById(v.id)
+  //       if (line) {
+  //         const index = this.universe.Vectors.indexOf(v)
+  //         this.universe.Vectors.splice(index, 1)
+  //         line.parentNode.removeChild(line)
+  //       }
+  //     }
+  //   })
+  // }
 }

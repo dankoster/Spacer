@@ -1,5 +1,3 @@
-Separate rendering from physics
 Zoom view to include all objects
 
-Implement object storage in Universe
 Calculate object position based on time instead of on each render
