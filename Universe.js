@@ -10,6 +10,23 @@ export class Universe {
     this.Vectors = []
   }
 
+  get OverviewSize() {
+    var size = {
+      xMax: undefined,
+      yMax: undefined,
+      xMin: undefined,
+      yMin: undefined
+    }
+    for (var o in this.Objects) {
+      var obj = this.Objects[o]
+      if(size.xMax == undefined || obj.position.X > size.xMax) size.xMax = obj.position.X
+      if(size.yMax == undefined || obj.position.Y > size.yMax) size.yMax = obj.position.Y
+      if(size.xMin == undefined || obj.position.X < size.xMin) size.xMin = obj.position.X
+      if(size.yMin == undefined || obj.position.Y < size.yMin) size.yMin = obj.position.Y
+    }
+    return size
+  }
+
   Add(so) {
     if (!(so instanceof SpaceObject)) throw 'obj must be an instance of SpaceObject';
 
