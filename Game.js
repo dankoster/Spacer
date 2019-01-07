@@ -1,7 +1,6 @@
 import { SpaceObject } from './SpaceObject.js'
 import { Universe } from './Universe.js'
 import { Vector } from './Vector.js'
-import { limitedRandom } from './utility.js'
 
 export function StartGameLoop(game) {
   var loop = function (tFrame) {
@@ -137,37 +136,5 @@ export class Game {
 
   render(frame) {
     this.universe.UpdatePositions(this.max_X, this.min_X, this.max_Y, this.min_Y);
-
-    // this.RenderVectors()
   }
-
-  // RenderVectors() {
-  //   this.universe.Vectors.forEach(v => {
-  //     if (!v.id) {
-  //       v.id = Date.now()
-  //       var svg = document.getElementsByTagName('svg')[0]
-  //       var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
-  //       if (v.name) newElement.setAttribute("name", v.name);
-  //       newElement.setAttribute("id", v.id);
-  //       newElement.setAttribute("x1", v.position.X);
-  //       newElement.setAttribute("y1", v.position.Y);
-  //       newElement.setAttribute("x2", v.position.X + (v.vector.X * 100));
-  //       newElement.setAttribute("y2", v.position.Y + (v.vector.Y * 100));
-  //       newElement.setAttribute("marker-end", "url(#arrow)")
-  //       newElement.style.strokeWidth = "5"
-  //       newElement.style.stroke = v.obj.attributes["fill"].value; //Set stroke colour
-  //       newElement.style.strokeWidth = "1px"; //Set stroke width
-  //       svg.appendChild(newElement);
-  //     }
-  //     else if (Date.now() - v.id > 5000) {
-  //       //remove old lines
-  //       var line = document.getElementById(v.id)
-  //       if (line) {
-  //         const index = this.universe.Vectors.indexOf(v)
-  //         this.universe.Vectors.splice(index, 1)
-  //         line.parentNode.removeChild(line)
-  //       }
-  //     }
-  //   })
-  // }
 }
