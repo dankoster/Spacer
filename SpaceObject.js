@@ -78,11 +78,11 @@ export class SpaceObject {
       var undrY = this.newPos.Y < min_Y;
 
       //constrain velocity at the boundaries
-      if (overX || undrX) { 
-        this.Velocity.X *= -1; this.Velocity.X *= 0.25; 
+      if (overX || undrX) {
+        this.Velocity.X *= -1; this.Velocity.X *= 0.25;
       }
-      if (overY || undrY) { 
-        this.Velocity.Y *= -1; this.Velocity.Y *= 0.25; 
+      if (overY || undrY) {
+        this.Velocity.Y *= -1; this.Velocity.Y *= 0.25;
       }
 
       //constrain position
@@ -99,16 +99,25 @@ export class SpaceObject {
           let overlap = distance - this.radius - uo.radius;
           if (overlap < 1) {
 
+            var displacement = this.GetDisplacementTo(uo, overlap)
             if (!this.collidingWith.includes(uo)) {
               //console.log({thing: this.obj, collidingWith: uo.obj})
               this.collidingWith.push(uo)
               uo.collidingWith.push(this)
               var newV = this.ResolveCollision(this, uo)
-              var damper = 0.9 //don't want perfectly elastic collisions
+
+              var damper = 0.5 //don't want perfectly elastic collisions
               this.Velocity.X = newV.X1 * damper
               this.Velocity.Y = newV.Y1 * damper
               uo.Velocity.X = newV.X2 * damper
               uo.Velocity.Y = newV.Y2 * damper
+
+              this.newPos.X += displacement.X
+              this.newPos.Y += displacement.Y
+              var di = displacement.Inverse
+              uo.newPos.X += di.X
+              uo.newPos.Y += di.Y
+
               this.UpdateNewPosition(this.Velocity)
               SpaceObject.UpdateNewPosition(uo, uo.Velocity)
             }
@@ -116,11 +125,6 @@ export class SpaceObject {
               //haven't calculated a new position for this yet but it's overlapping the other thing
               // so displace it away from the other thing along an inverse of the gravity vector
               // by the amount of the overlap
-              var vectorToUo = new Vector(
-                uo.position.X - this.position.X,
-                uo.position.Y - this.position.Y
-              )
-              var displacement = vectorToUo.Unit.Inverse.Multiply(Math.abs(overlap/2))
               this.newPos.X += displacement.X
               this.newPos.Y += displacement.Y
               this.UpdateNewPosition(this.Velocity)
@@ -135,6 +139,15 @@ export class SpaceObject {
         this.UpdateNewPosition(this.Velocity)
       }
     }
+  }
+
+  GetDisplacementTo(otherObject, overlap) {
+    var vectorToOtherObject = new Vector(
+      otherObject.position.X - this.position.X,
+      otherObject.position.Y - this.position.Y
+    )
+    var displacement = vectorToOtherObject.Unit.Inverse.Multiply(Math.abs(overlap / 2))
+    return displacement
   }
 
   UpdateNewPosition(v) {
@@ -159,9 +172,9 @@ export class SpaceObject {
       x: b2.position.X - b1.position.X,
       y: b2.position.Y - b1.position.Y
     };
-    
+
     // can't have a zero-distance (you get black holes and such)
-    if(delta.x == 0 && delta.y == 0){
+    if (delta.x == 0 && delta.y == 0) {
       delta.x = Math.random()
       delta.y = Math.random()
     }
