@@ -12,10 +12,15 @@ export class Universe {
 
   get OverviewSize() {
     var size = {
+      buffer: 200,
       xMax: undefined,
       yMax: undefined,
       xMin: undefined,
-      yMin: undefined
+      yMin: undefined,
+      x: undefined,
+      y: undefined,
+      w: undefined,
+      h: undefined,
     }
     for (var o in this.Objects) {
       var obj = this.Objects[o]
@@ -24,6 +29,12 @@ export class Universe {
       if(size.xMin == undefined || obj.position.X < size.xMin) size.xMin = obj.position.X
       if(size.yMin == undefined || obj.position.Y < size.yMin) size.yMin = obj.position.Y
     }
+
+    if(size.xMin != undefined) size.x = size.xMin - size.buffer
+    if(size.yMin != undefined) size.y = size.yMin - size.buffer
+    if(size.xMax != undefined && size.xMin != undefined) size.w = size.xMax - size.xMin + 2 * size.buffer
+    if(size.yMax != undefined && size.yMin != undefined) size.h = size.yMax - size.yMin + 2 * size.buffer
+
     return size
   }
 
@@ -34,9 +45,9 @@ export class Universe {
     this.Objects.push(so);
   }
 
-  UpdatePositions(max_X, min_X, max_Y, min_Y) {
+  UpdatePositions() {
     for (var o in this.Objects) {
-      this.Objects[o].CalculateNewPosition(max_X, min_X, max_Y, min_Y);
+      this.Objects[o].CalculateNewPosition();
     }
     for (var o in this.Objects) {
       this.Objects[o].UpdatePosition();

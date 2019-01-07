@@ -61,7 +61,7 @@ export class SpaceObject {
     this.position.Y = this.newPos.Y;
   }
 
-  CalculateNewPosition(max_X, min_X, max_Y, min_Y) {
+  CalculateNewPosition() {
 
     if (!this.hasNewPosition) {
       this.Velocity = this.Velocity.Add(this.totalAcceleration);
@@ -70,26 +70,6 @@ export class SpaceObject {
       // because changes to those don't take effect until the page is rendered
       this.newPos.X = this.position.X
       this.newPos.Y = this.position.Y
-
-      //have made it outside the boundaries?
-      var overX = this.newPos.X > max_X;
-      var overY = this.newPos.Y > max_Y;
-      var undrX = this.newPos.X < min_X;
-      var undrY = this.newPos.Y < min_Y;
-
-      //constrain velocity at the boundaries
-      if (overX || undrX) {
-        this.Velocity.X *= -1; this.Velocity.X *= 0.25;
-      }
-      if (overY || undrY) {
-        this.Velocity.Y *= -1; this.Velocity.Y *= 0.25;
-      }
-
-      //constrain position
-      if (overX) this.newPos.X = max_X;
-      if (overY) this.newPos.Y = max_Y;
-      if (undrX) this.newPos.X = min_X;
-      if (undrY) this.newPos.Y = min_Y;
 
       //detect and handle collision
       for (var o in this.universe.Objects) {
@@ -106,7 +86,7 @@ export class SpaceObject {
               uo.collidingWith.push(this)
               var newV = this.ResolveCollision(this, uo)
 
-              var damper = 0.5 //don't want perfectly elastic collisions
+              var damper = 0.55 //don't want perfectly elastic collisions
               this.Velocity.X = newV.X1 * damper
               this.Velocity.Y = newV.Y1 * damper
               uo.Velocity.X = newV.X2 * damper

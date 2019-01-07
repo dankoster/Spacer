@@ -21,12 +21,11 @@ export class renderSVG {
 			}
 		});
 
-		var s = this.game.universe.OverviewSize
 		if (!this.overview) {
 			this.overview = new rectangle({ id: 'overview' })
 			this.svg.appendChild(this.overview.element)
 		}
-		this.overview.update(s)
+		this.overview.update(this.game.universe.OverviewSize)
 	}
 }
 
@@ -57,11 +56,11 @@ export class rectangle extends rendered {
 		return e
 	}
 
-	update(s) {
-		this.x = s.xMin
-		this.y = s.yMin
-		this.w = s.xMax - s.xMin
-		this.h = s.yMax - s.yMin
+	update({x,y,w,h}) {
+		this.x = x
+		this.y = y
+		this.w = w
+		this.h = h
 	}
 
 	set x(value) { if (value) this.element.setAttribute('x', value); }

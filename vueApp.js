@@ -17,6 +17,7 @@ var app = new Vue({
 	},
 	mounted: function () {
 
+		var v = this
 		var StartLoop = function (game, renderer) {
 			var fps = 30
 			var fpsInterval = 1000 / fps;
@@ -24,16 +25,16 @@ var app = new Vue({
 			var now, elapsed
 
 			var loop = function (tFrame) {
+
+				game.universe.UpdatePositions();
+
+				//limit fps for display rendering
 				now = tFrame;
 				elapsed = now - then;
-
-				game.render(tFrame)
-				
 				if (elapsed > fpsInterval) {
-					// Get ready for next frame by setting then=now, but...
-					// Also, adjust for fpsInterval not being multiple of 16.67
-					then = now - (elapsed % fpsInterval);
+					then = now - (elapsed % fpsInterval);// adjust for fpsInterval not being multiple of 16.67
 					renderer.render(tFrame)
+					v.setViewBox(game.universe.OverviewSize)
 				}
 
 				window.requestAnimationFrame(loop)
@@ -52,11 +53,17 @@ var app = new Vue({
 		}
 	},
 	methods: {
-		addOne: function (event) {
+		test: function (event) {
 			this.game.test()
 		},
-		freeze: function (event) {
-			this.game.freeze()
+		setViewBox(o) {
+			o = o ? o : game.universe.OverviewSize
+			if (!Object.keys(o).some(k => o[k] == undefined)) {
+				this.minx = o.x
+				this.miny = o.y
+				this.width = o.w
+				this.height = o.h
+			}
 		}
 	}
 });

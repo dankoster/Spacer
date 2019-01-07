@@ -133,8 +133,4 @@ export class Game {
       so.newPos.X = 400
     })
   }
-
-  render(frame) {
-    this.universe.UpdatePositions(this.max_X, this.min_X, this.max_Y, this.min_Y);
-  }
 }
