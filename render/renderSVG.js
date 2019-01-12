@@ -12,7 +12,7 @@ export class renderSVG {
 	render() {
 		this.game.universe.Objects.forEach(so => {
 			if (!this.renderItems[so.id]) {
-				var newItem = new circle({ so, fill: so.id > 0 ? 'red' : 'blue' })
+				var newItem = new circle({ so, fill: so.id > 0 ? 'red' : 'lime' })
 				this.renderItems[so.id] = newItem
 				this.svg.appendChild(newItem.element)
 				if (newItem.label) this.svg.appendChild(newItem.label)

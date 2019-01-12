@@ -21,10 +21,10 @@ export class Position {
 
 export class SpaceObject {
 
-  constructor({ X, Y, R, mass, id }) {
+  constructor({ X, Y, R, V = new Vector(0, 0), mass, id }) {
     this.id = id >= 0 ? id : Date.now()
     this.mass = mass
-    this.Velocity = new Vector(0, 0)
+    this.Velocity = V
     this.ThrustVectors = {}
     this.collidingWith = []
     this.universe = undefined
@@ -217,7 +217,7 @@ export class SpaceObject {
     // detect unreasonable acceleration
     if (Math.abs(result.X1) - Math.abs(b1.Velocity.X) > 15) {
       console.log({ id: b1.id, v1x, v1y, v2x, v2y, result })
-      debugger
+      //debugger
     }
 
     return result

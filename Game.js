@@ -115,10 +115,23 @@ export class Game {
     this.universe.Add(new SpaceObject({
       X: limitedRandom(0,800),
       Y: limitedRandom(0,600),
-      R: 15,
+      R: 20,
       mass: 50000,
       id: this.universe.Objects.length
     }))
+
+    for(var i = 0;i < 30;i++)
+    {
+      var mass = limitedRandom(50000,100000)
+      this.universe.Add(new SpaceObject({
+        X: limitedRandom(0,8000),
+        Y: limitedRandom(0,6000),
+        R: mass * 0.001,
+        mass: mass,
+        V: new Vector(limitedRandom(-15,15), limitedRandom(-15,15)),
+        id: this.universe.Objects.length
+      }))  
+    }
   }
 
   freeze() {
