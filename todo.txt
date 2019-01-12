@@ -1,3 +1,0 @@
-Zoom view to include all objects
-
-Calculate object position based on time instead of on each render
