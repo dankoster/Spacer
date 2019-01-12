@@ -5,7 +5,7 @@ export class Universe {
 
   constructor() {
     this.distanceMultiplier = 1
-    this.G = 0.0000000000667400; //universal gravitational constant (doesn't actually matter so much unless we use real units and such for everything)
+    this.G = 0.000000000667400; //universal gravitational constant (doesn't actually matter so much unless we use real units and such for everything)
     this.Objects = [] //a list of all the objects in the universe (so we can calculate gravity correctly)
     this.Vectors = []
   }
