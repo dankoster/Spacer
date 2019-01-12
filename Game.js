@@ -1,6 +1,7 @@
 import { SpaceObject } from './SpaceObject.js'
 import { Universe } from './Universe.js'
 import { Vector } from './Vector.js'
+import { limitedRandom } from './utility.js'
 
 export function StartGameLoop(game) {
   var loop = function (tFrame) {
@@ -109,18 +110,11 @@ export class Game {
 
   }
 
+  //python -m SimpleHTTPServer 8000
   test() {
     this.universe.Add(new SpaceObject({
-      X: 400,
-      Y: 100,
-      R: 15,
-      mass: 50000,
-      id: this.universe.Objects.length
-    }))
-    
-    this.universe.Add(new SpaceObject({
-      X: 400,
-      Y: 200,
+      X: limitedRandom(0,800),
+      Y: limitedRandom(0,600),
       R: 15,
       mass: 50000,
       id: this.universe.Objects.length

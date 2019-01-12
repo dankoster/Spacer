@@ -15,6 +15,7 @@ export class renderSVG {
 				var newItem = new circle({ so, fill: so.id > 0 ? 'red' : 'blue' })
 				this.renderItems[so.id] = newItem
 				this.svg.appendChild(newItem.element)
+				if (newItem.label) this.svg.appendChild(newItem.label)
 			}
 			else { //item already exists
 				this.renderItems[so.id].update()
@@ -30,9 +31,10 @@ export class renderSVG {
 }
 
 export class rendered {
-	constructor(so, element) {
+	constructor({ so, element, label }) {
 		this.so = so
 		this.element = element
+		this.label = label
 	}
 
 	get id() { return so.id }
@@ -43,10 +45,10 @@ export class rectangle extends rendered {
 	constructor({ so, id, x, y, w, h }) {
 		if (so != undefined) throw 'so not implemented for rectangle'
 		var e = rectangle.createElement({ id, x, y, w, h })
-		super(null, e)
+		super({ element: e })
 	}
 
-	static createElement({ id, x=0, y=0, w=0, h=0 }) {
+	static createElement({ id, x = 0, y = 0, w = 0, h = 0 }) {
 		var e = document.createElementNS("http://www.w3.org/2000/svg", 'rect'); //Create a path in SVG's namespace
 		e.setAttribute("id", id)
 		e.setAttribute("x", x)
@@ -56,11 +58,29 @@ export class rectangle extends rendered {
 		return e
 	}
 
-	update({x,y,w,h}) {
+	update({ x, y, w, h }) {
+
+		var parentWidth = this.element.parentElement.width.baseVal.value
+		var parentHeight = this.element.parentElement.height.baseVal.value
+		var ratio
+		
+		// var ratio = Math.min(w / parentWidth, h / parentHeight);
+		// var s = { width: w*ratio, height: h*ratio };
+
+		// if (w > parentWidth) {
+		// 	ratio = w/parentWidth
+		// 	h *= ratio
+		// }
+
+		// if (h > parentHeight) {
+		// 	ratio = h/parentHeight
+		// 	w *= ratio
+		// }
+
 		this.x = x
 		this.y = y
-		this.w = w
-		this.h = h
+		this.w = w > parentWidth ? w : parentWidth
+		this.h = h > parentHeight ? h : parentHeight
 	}
 
 	set x(value) { if (value) this.element.setAttribute('x', value); }
@@ -80,7 +100,15 @@ export class circle extends rendered {
 			fill: fill
 		})
 
-		super(so, e)
+		// //<text x="40" y="35" class="heavy">cat</text>
+		// var l = document.createElementNS("http://www.w3.org/2000/svg", 'text'); //Create a path in SVG's namespace
+		// l.setAttribute("id", so.id)
+		// l.setAttribute("x", so.position.X)
+		// l.setAttribute("y", so.position.Y)
+		// l.setAttribute("class", "label")
+		// l.textContent = so.id
+
+		super({ so, element: e })
 	}
 
 	update() {
@@ -90,8 +118,9 @@ export class circle extends rendered {
 	}
 
 	static createElement({ id, x, y, r = 15, fill = 'red' }) {
-		x = x ? x : limitedRandom(20, 800)
-		y = y ? y : limitedRandom(0, 600)
+		// Object.getOwnPropertyNames(argumements).forEach(a => {
+		// 	if(arguments[a] === undefined) { debugger; throw $`{a} is undefined` }
+		// })
 
 		var e = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); //Create a path in SVG's namespace
 		e.setAttribute("id", id)
@@ -103,10 +132,20 @@ export class circle extends rendered {
 	}
 
 	get x() { return parseFloat(this.element.getAttribute('cx')); }
-	set x(value) { if (value) this.element.setAttribute('cx', value); }
+	set x(value) {
+		if (value) {
+			this.element.setAttribute('cx', value);
+			if (this.label) this.label.setAttribute('x', value)
+		}
+	}
 
 	get y() { return parseFloat(this.element.getAttribute('cy')); }
-	set y(value) { if (value) this.element.setAttribute('cy', value); }
+	set y(value) {
+		if (value) {
+			this.element.setAttribute('cy', value);
+			if (this.label) this.label.setAttribute('y', value)
+		}
+	}
 
 	get r() { return parseFloat(this.element.getAttribute('r')); }
 	set r(value) { if (value) this.element.setAttribute('r', value); }

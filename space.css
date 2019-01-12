@@ -1,14 +1,35 @@
 body {
   background-color: #282828;
+  display:flex;
+}
+
+div#vueApp {
+  display:flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.scene {
+  display:flex;
+  flex: 1;
 }
 
 svg {
+  width: 100%;
+  height: 100%;
   border: 1px solid #ccc;
-  width:800px;
-  height: 600px;
 }
+
+.controls {
+  padding:10px;
+}
+
 .selected {
-  border: 3px solid black;
+  border: 3px solid white;
+}
+
+.label {
+  color: white;
 }
 
 /* https://3dtransforms.desandro.com/perspective */
