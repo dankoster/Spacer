@@ -24,10 +24,10 @@ export class Game {
     this.min_Y = 0
 
     this.thrust = {
-      U: new Vector({ X: 0, Y: -.2 }),
-      D: new Vector({ X: 0, Y: .2 }),
-      L: new Vector({ X: -.2, Y: 0 }),
-      R: new Vector({ X: .2, Y: 0 })
+      U: new Vector({ x: 0,   y: -.2 }),
+      D: new Vector({ x: 0,   y: .2 }),
+      L: new Vector({ x: -.2, y: 0 }),
+      R: new Vector({ x: .2,  y: 0 })
     };
 
     document.addEventListener('keydown', (event) => {
@@ -113,31 +113,35 @@ export class Game {
   //python -m SimpleHTTPServer 8000
   test() {
     this.universe.Add(new SpaceObject({
-      X: limitedRandom(0,800),
-      Y: limitedRandom(0,600),
+      X: 0,
+      Y: 1, 
       R: 20,
       mass: 50000,
+      V: new Vector({x:1, y:0}),
       id: this.universe.Objects.length
     }))
 
-    for(var i = 0;i < 30;i++)
+    // this.universe.Add(new SpaceObject({
+    //   X: 100,
+    //   Y: 1, 
+    //   R: 20,
+    //   mass: 50000, 
+    //   //V: new Vector(limitedRandom(-10,10), limitedRandom(-10,10)),
+    //   id: this.universe.Objects.length
+    // }))  
+
+
+    for(var i = 0;i < 40;i++)
     {
       var mass = limitedRandom(50000,100000)
       this.universe.Add(new SpaceObject({
         X: limitedRandom(0,8000),
         Y: limitedRandom(0,6000),
-        R: mass * 0.001,
+        R: mass * .001,
         mass: mass,
-        V: new Vector(limitedRandom(-15,15), limitedRandom(-15,15)),
+        V: new Vector({x:limitedRandom(-10,10), y:limitedRandom(-10,10)}),
         id: this.universe.Objects.length
       }))  
     }
-  }
-
-  freeze() {
-    this.universe.Objects.forEach(so => {
-      so.Velocity = new Vector(0,0)
-      so.newPos.X = 400
-    })
   }
 }

@@ -16,12 +16,12 @@ export class Position {
     else throw `invalid Y value: ${value}`
   }
 
-  get AsVector() { return new Vector(this.X, this.Y) }
+  get AsVector() { return new Vector({x:this.X, y:this.Y}) }
 }
 
 export class SpaceObject {
 
-  constructor({ X, Y, R, V = new Vector(0, 0), mass, id }) {
+  constructor({ X, Y, R, V = new Vector({}), mass, id }) {
     this.id = id >= 0 ? id : Date.now()
     this.mass = mass
     this.Velocity = V
@@ -60,15 +60,13 @@ export class SpaceObject {
   }
 
   UpdatePosition() {
+    this.UpdateNewPosition(this.Velocity)
+
     this.position.X = this.newPos.X;
     this.position.Y = this.newPos.Y;
   }
 
-  CalculateNewPosition() {
-    this.old = {
-      X: this.Velocity.X,
-      Y: this.Velocity.Y
-    }
+  CalculateNewVelocity() {
     //Have to calculate the new position separately from the thix.X and this.Y
     // because changes to those don't take effect until the page is rendered
     this.newPos.X = this.position.X
@@ -80,12 +78,12 @@ export class SpaceObject {
       if (uo != this) {
         let distance = SpaceObject.DistanceBetween(this.newPos, uo.newPos) //this.DistanceTo(uo)
         let overlap = distance - this.radius - uo.radius;
-        if (overlap <= 0) {
+        if (overlap < 0) {
 
           //haven't calculated a new position for this yet but it's overlapping the other thing
           // so displace it away from the other thing along an inverse of the gravity vector
           // by the amount of the overlap
-          var displacement = this.GetDisplacementTo(uo, overlap)//.Multiply(1.5)
+          var displacement = this.GetDisplacementTo(uo, overlap)
           this.newPos.X += displacement.X
           this.newPos.Y += displacement.Y
           var di = displacement.Inverse
@@ -93,52 +91,25 @@ export class SpaceObject {
           uo.newPos.Y += di.Y
 
           var newV = this.ResolveCollision(this, uo)
-          var damper = 0.5 //don't want perfectly elastic collisions? Why is 0.5 ideal???
 
-          this.Velocity.X = newV.X1 * damper
-          this.Velocity.Y = newV.Y1 * damper
-          uo.Velocity.X = newV.X2 * damper
-          uo.Velocity.Y = newV.Y2 * damper
-
-
-          //trying for a simpler collision
-          //https://en.wikipedia.org/wiki/Elastic_collision
-          // var m1 = this.mass
-          // var m2 = uo.mass
-          // var M1 = (2*m2)/(m1+m2)
-          // var M2 = (2*m1)/(m1+m2)
-          // var v1 = this.Velocity
-          // var v2 = uo.Velocity
-          // var x1 = this.newPos.AsVector
-          // var x2 = uo.newPos.AsVector
-
-          // var N1 = Vector.DotProduct(v1.Subtract(v2),x1.Subtract(x2))
-          // var D1 = Math.pow(x1.Subtract(x2).M, 2)
-          // var v1d = x1.Subtract(x2).Multiply(M1*(N1/D1))
-
-          // var N2 = Vector.DotProduct(v2.Subtract(v1),x2.Subtract(x1))
-          // var D2 = Math.pow(x2.Subtract(x1).M, 2)
-          // var v2d = x2.Subtract(x1).Multiply(M2*(N2/D2))
-
-          // this.Velocity = v1.Subtract(v1d)
-          // uo.Velocity = v2.Subtract(v2d)
-
+          var damper = 0.98
+          this.Velocity = newV.V1.Multiply(damper)
+          uo.Velocity = newV.V2.Multiply(damper)
         }
       }
     }
 
+    //Add acceleration due to gravity and other factors
     var gv = this.totalAcceleration
     this.Velocity.X += gv.X
     this.Velocity.Y += gv.Y
-
-    this.UpdateNewPosition(this.Velocity)
   }
 
   GetDisplacementTo(otherObject, overlap) {
-    var vectorToOtherObject = new Vector(
-      otherObject.position.X - this.position.X,
-      otherObject.position.Y - this.position.Y
-    )
+    var vectorToOtherObject = new Vector({
+      x: otherObject.position.X - this.position.X,
+      y: otherObject.position.Y - this.position.Y
+    })
     var amount = (overlap * -1)
     var displacement = vectorToOtherObject.Unit.Inverse.Multiply(amount)
     return displacement
@@ -155,6 +126,7 @@ export class SpaceObject {
 
   ResolveCollision(b1, b2) {
     //https://stackoverflow.com/a/27016465
+    //https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf
 
     var v1x = b1.Velocity.X,
       v2x = b2.Velocity.X,
@@ -163,8 +135,8 @@ export class SpaceObject {
 
     // Collision vector
     var delta = {
-      x: b2.position.X - b1.position.X,
-      y: b2.position.Y - b1.position.Y
+      x: b2.newPos.X - b1.newPos.X,
+      y: b2.newPos.Y - b1.newPos.Y
     };
 
     // can't have a zero-distance (you get black holes and such)
@@ -176,49 +148,50 @@ export class SpaceObject {
     var d = Math.sqrt(delta.x * delta.x + delta.y * delta.y)
 
     // Normalized collision vector
-    var dn = {
+    var dn = new Vector({
       x: delta.x / d,
       y: delta.y / d
-    }
+    })
 
     // Normalized tangent collision vector
-    var dt = {
-      x: dn.y,
-      y: dn.x
-    };
+    var dt = new Vector({
+      x: dn.Y == 0 ? dn.Y : dn.Y * -1,
+      y: dn.Y == 0 ? dn.X * -1 : dn.X
+    })
 
     // projection of v1 on the collision vector
     var v1Proj = {
-      n: dn.x * v1x + dn.y * v1y,
-      t: dt.x * v1x + dt.y * v1y
+      n: dn.X * v1x + dn.Y * v1y,
+      t: dt.X * v1x + dt.Y * v1y
     };
 
     // projection of v2 on the collision vector
     var v2Proj = {
-      n: dn.x * v2x + dn.y * v2y,
-      t: dt.x * v2x + dt.y * v2y
+      n: dn.X * v2x + dn.Y * v2y,
+      t: dt.X * v2x + dt.Y * v2y
     };
 
     // solving collision on the normal
     var m1 = b1.mass;
     var m2 = b2.mass;
     var M = (m1 + m2);
-    var newV1ProjN = ((m1 - m2) * v1Proj.n + 2 * m2 * v2Proj.n) / M;
-    var newV2ProjN = ((m2 - m1) * v2Proj.n + 2 * m1 * v1Proj.n) / M;
+    var newV1ProjN = (((m1 - m2) * v1Proj.n) + (2 * m2 * v2Proj.n)) / M;
+    var newV2ProjN = (((m2 - m1) * v2Proj.n) + (2 * m1 * v1Proj.n)) / M;
 
     // re-building speed vector out of projected vectors
+    var v1n = dn.Multiply(newV1ProjN)
+    var v2n = dn.Multiply(newV2ProjN)
+    var v1t = dt.Multiply(v1Proj.t)
+    var v2t = dt.Multiply(v2Proj.t)
     var result = {
-      X1: newV1ProjN * dn.x + v1Proj.t * dt.x,
-      Y1: newV1ProjN * dn.y + v1Proj.t * dt.y,
-      X2: newV2ProjN * dn.x + v2Proj.t * dt.x,
-      Y2: newV2ProjN * dn.y + v2Proj.t * dt.y,
+      V1: v1n.Add(v1t),
+      V2: v2n.Add(v2t)
     }
 
-    // detect unreasonable acceleration
-    if (Math.abs(result.X1) - Math.abs(b1.Velocity.X) > 15) {
-      console.log({ id: b1.id, v1x, v1y, v2x, v2y, result })
-      //debugger
-    }
+    // // detect unreasonable acceleration
+    // if (Math.abs(result.X1) - Math.abs(b1.Velocity.X) > 20) {
+    //   console.log({ id: b1.id, v1x, v1y, v2x, v2y, result })
+    // }
 
     return result
   }

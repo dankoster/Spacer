@@ -47,7 +47,7 @@ export class Universe {
 
   UpdatePositions() {
     for (var o in this.Objects) {
-      this.Objects[o].CalculateNewPosition();
+      this.Objects[o].CalculateNewVelocity();
     }
     for (var o in this.Objects) {
       this.Objects[o].UpdatePosition();
@@ -62,7 +62,7 @@ export class Universe {
     // http://en.wikipedia.org/wiki/Law_of_universal_gravitation
     // https://en.wikipedia.org/wiki/Gravitational_constant#Orbital_mechanics
 
-    var gravVector = new Vector(0, 0);
+    var gravVector = new Vector({});
 
     if (thisObject.mass > 0) {
       for (var so in thisObject.universe.Objects) {
@@ -79,7 +79,7 @@ export class Universe {
   }
 
   GetGravityVectorFromTo(thisObject, otherObject) {
-    var result = new Vector(0, 0)
+    var result = new Vector({})
     var distance = thisObject.DistanceTo(otherObject)
     distance *= this.distanceMultiplier;
     if (distance !== 0) {
