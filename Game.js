@@ -24,10 +24,10 @@ export class Game {
     this.min_Y = 0
 
     this.thrust = {
-      U: new Vector({ X: 0, Y: -.2 }),
-      D: new Vector({ X: 0, Y: .2 }),
-      L: new Vector({ X: -.2, Y: 0 }),
-      R: new Vector({ X: .2, Y: 0 })
+      U: new Vector({ x: 0,   y: -.2 }),
+      D: new Vector({ x: 0,   y: .2 }),
+      L: new Vector({ x: -.2, y: 0 }),
+      R: new Vector({ x: .2,  y: 0 })
     };
 
     document.addEventListener('keydown', (event) => {
@@ -139,12 +139,5 @@ export class Game {
 //        id: this.universe.Objects.length
 //      }))  
 //    }
-  }
-
-  freeze() {
-    this.universe.Objects.forEach(so => {
-      so.Velocity = new Vector(0,0)
-      so.newPos.X = 400
-    })
   }
 }

@@ -16,12 +16,12 @@ export class Position {
     else throw `invalid Y value: ${value}`
   }
 
-  get AsVector() { return new Vector(this.X, this.Y) }
+  get AsVector() { return new Vector({x:this.X, y:this.Y}) }
 }
 
 export class SpaceObject {
 
-  constructor({ X, Y, R, V = new Vector(0, 0), mass, id }) {
+  constructor({ X, Y, R, V = new Vector({}), mass, id }) {
     this.id = id >= 0 ? id : Date.now()
     this.mass = mass
     this.Velocity = V
@@ -60,6 +60,8 @@ export class SpaceObject {
   }
 
   UpdatePosition() {
+    this.UpdateNewPosition(this.Velocity)
+
     this.position.X = this.newPos.X;
     this.position.Y = this.newPos.Y;
     this.collidingWith = []
@@ -104,6 +106,7 @@ export class SpaceObject {
       }
     }
 
+    //Add acceleration due to gravity and other factors
     var gv = this.totalAcceleration
     this.Velocity.X += gv.X
     this.Velocity.Y += gv.Y
@@ -115,10 +118,10 @@ export class SpaceObject {
   }
 
   GetDisplacementTo(otherObject, overlap) {
-    var vectorToOtherObject = new Vector(
-      otherObject.position.X - this.position.X,
-      otherObject.position.Y - this.position.Y
-    )
+    var vectorToOtherObject = new Vector({
+      x: otherObject.position.X - this.position.X,
+      y: otherObject.position.Y - this.position.Y
+    })
     var amount = (overlap * -1)
     var displacement = vectorToOtherObject.Unit.Inverse.Multiply(amount)
     return displacement
@@ -135,6 +138,7 @@ export class SpaceObject {
 
   ResolveCollision(b1, b2) {
     //https://stackoverflow.com/a/27016465
+    //https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf
 
     var v1x = b1.Velocity.X,
       v2x = b2.Velocity.X,
@@ -159,10 +163,10 @@ export class SpaceObject {
     var d = Math.sqrt(delta.x * delta.x + delta.y * delta.y)
 
     // Normalized collision vector
-    var dn = {
+    var dn = new Vector({
       x: delta.x / d,
       y: delta.y / d
-    }
+    })
 
     // Normalized tangent collision vector
     var dt = {
@@ -172,29 +176,31 @@ export class SpaceObject {
 
     // projection of v1 on the collision vector
     var v1Proj = {
-      n: dn.x * v1x + dn.y * v1y,
-      t: dt.x * v1x + dt.y * v1y
+      n: dn.X * v1x + dn.Y * v1y,
+      t: dt.X * v1x + dt.Y * v1y
     };
 
     // projection of v2 on the collision vector
     var v2Proj = {
-      n: dn.x * v2x + dn.y * v2y,
-      t: dt.x * v2x + dt.y * v2y
+      n: dn.X * v2x + dn.Y * v2y,
+      t: dt.X * v2x + dt.Y * v2y
     };
 
     // solving collision on the normal
     var m1 = b1.mass;
     var m2 = b2.mass;
     var M = (m1 + m2);
-    var newV1ProjN = ((m1 - m2) * v1Proj.n + 2 * m2 * v2Proj.n) / M;
-    var newV2ProjN = ((m2 - m1) * v2Proj.n + 2 * m1 * v1Proj.n) / M;
+    var newV1ProjN = (((m1 - m2) * v1Proj.n) + (2 * m2 * v2Proj.n)) / M;
+    var newV2ProjN = (((m2 - m1) * v2Proj.n) + (2 * m1 * v1Proj.n)) / M;
 
     // re-building speed vector out of projected vectors
+    var v1n = dn.Multiply(newV1ProjN)
+    var v2n = dn.Multiply(newV2ProjN)
+    var v1t = dt.Multiply(v1Proj.t)
+    var v2t = dt.Multiply(v2Proj.t)
     var result = {
-      X1: newV1ProjN * dn.x + v1Proj.t * dt.x,
-      Y1: newV1ProjN * dn.y + v1Proj.t * dt.y,
-      X2: newV2ProjN * dn.x + v2Proj.t * dt.x,
-      Y2: newV2ProjN * dn.y + v2Proj.t * dt.y,
+      V1: v1n.Add(v1t),
+      V2: v2n.Add(v2t)
     }
 
     return result
