@@ -23,8 +23,15 @@
                 </defs>
             </svg>
         </div>
-        <div class="controls">
-            <button v-on:click="test">Add One</button>
+        <div class="bottom">
+	        <div class="controls">
+	            <button v-on:click="test">TEST</button>
+	        </div>
+	        <div class="info" v-if="game && game.universe">
+<!--				<div v-for="o in game.universe.Objects">
+					{{o.id}} M:{{Math.round(o.mass)}} X:{{Math.round(o.position.X)}} Y:{{Math.round(o.position.Y)}}
+				</div>
+-->			</div>
         </div>
     </div>
     <script type="text/javascript" src="vue.js"></script>

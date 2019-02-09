@@ -113,25 +113,32 @@ export class Game {
   //python -m SimpleHTTPServer 8000
   test() {
     this.universe.Add(new SpaceObject({
-      X: limitedRandom(0,800),
-      Y: limitedRandom(0,600),
-      R: 20,
-      mass: 50000,
+      X: 0,
+      Y: 0, 
+      R: 100,
+      mass: 100000,
+      id: this.universe.Objects.length
+    }))
+    this.universe.Add(new SpaceObject({
+      X: 150,
+      Y: 150, 
+      R: 100,
+      mass: 100000,
       id: this.universe.Objects.length
     }))
 
-    for(var i = 0;i < 30;i++)
-    {
-      var mass = limitedRandom(50000,100000)
-      this.universe.Add(new SpaceObject({
-        X: limitedRandom(0,8000),
-        Y: limitedRandom(0,6000),
-        R: mass * 0.001,
-        mass: mass,
-        V: new Vector(limitedRandom(-15,15), limitedRandom(-15,15)),
-        id: this.universe.Objects.length
-      }))  
-    }
+//    for(var i = 0;i < 2;i++)
+//    {
+//      var mass = 100000 //limitedRandom(10000,100000)
+//      this.universe.Add(new SpaceObject({
+//        X: limitedRandom(0,800),
+//        Y: 0, //limitedRandom(0,600),
+//        R: mass * 0.001,
+//        mass: mass,
+//        //V: new Vector(limitedRandom(-15,15), limitedRandom(-15,15)),
+//        id: this.universe.Objects.length
+//      }))  
+//    }
   }
 
   freeze() {

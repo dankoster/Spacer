@@ -62,30 +62,30 @@ export class SpaceObject {
   UpdatePosition() {
     this.position.X = this.newPos.X;
     this.position.Y = this.newPos.Y;
+    this.collidingWith = []
   }
 
   CalculateNewPosition() {
-    this.old = {
-      X: this.Velocity.X,
-      Y: this.Velocity.Y
-    }
-    //Have to calculate the new position separately from the thix.X and this.Y
-    // because changes to those don't take effect until the page is rendered
+    //Calculate the new position without changing current position
+    // so all the gravity calculations are consistent
     this.newPos.X = this.position.X
     this.newPos.Y = this.position.Y
 
     //detect and handle collision
     for (var o in this.universe.Objects) {
       var uo = this.universe.Objects[o]
-      if (uo != this) {
-        let distance = SpaceObject.DistanceBetween(this.newPos, uo.newPos) //this.DistanceTo(uo)
+      if (uo != this && !this.collidingWith.includes(uo.id)) {
+        let distance = SpaceObject.DistanceBetween(this.newPos, uo.newPos) 
         let overlap = distance - this.radius - uo.radius;
         if (overlap <= 0) {
+        
+          this.collidingWith.push(uo.id)
+          uo.collidingWith.push(this.id)
 
-          //haven't calculated a new position for this yet but it's overlapping the other thing
-          // so displace it away from the other thing along an inverse of the gravity vector
-          // by the amount of the overlap
-          var displacement = this.GetDisplacementTo(uo, overlap)//.Multiply(1.5)
+          //haven't calculated a new position for this yet but it's overlapping the other 
+          // thing so displace it away from the other thing along an inverse of the gravity 
+          // vector by the amount of the overlap
+          var displacement = this.GetDisplacementTo(uo, overlap)
           this.newPos.X += displacement.X
           this.newPos.Y += displacement.Y
           var di = displacement.Inverse
@@ -93,36 +93,13 @@ export class SpaceObject {
           uo.newPos.Y += di.Y
 
           var newV = this.ResolveCollision(this, uo)
-          var damper = 0.5 //don't want perfectly elastic collisions? Why is 0.5 ideal???
-
-          this.Velocity.X = newV.X1 * damper
-          this.Velocity.Y = newV.Y1 * damper
-          uo.Velocity.X = newV.X2 * damper
-          uo.Velocity.Y = newV.Y2 * damper
-
-
-          //trying for a simpler collision
-          //https://en.wikipedia.org/wiki/Elastic_collision
-          // var m1 = this.mass
-          // var m2 = uo.mass
-          // var M1 = (2*m2)/(m1+m2)
-          // var M2 = (2*m1)/(m1+m2)
-          // var v1 = this.Velocity
-          // var v2 = uo.Velocity
-          // var x1 = this.newPos.AsVector
-          // var x2 = uo.newPos.AsVector
-
-          // var N1 = Vector.DotProduct(v1.Subtract(v2),x1.Subtract(x2))
-          // var D1 = Math.pow(x1.Subtract(x2).M, 2)
-          // var v1d = x1.Subtract(x2).Multiply(M1*(N1/D1))
-
-          // var N2 = Vector.DotProduct(v2.Subtract(v1),x2.Subtract(x1))
-          // var D2 = Math.pow(x2.Subtract(x1).M, 2)
-          // var v2d = x2.Subtract(x1).Multiply(M2*(N2/D2))
-
-          // this.Velocity = v1.Subtract(v1d)
-          // uo.Velocity = v2.Subtract(v2d)
-
+          if(newV)
+          {
+            this.Velocity.X = newV.X1
+            this.Velocity.Y = newV.Y1
+            uo.Velocity.X = newV.X2
+            uo.Velocity.Y = newV.Y2
+          }
         }
       }
     }
@@ -131,7 +108,10 @@ export class SpaceObject {
     this.Velocity.X += gv.X
     this.Velocity.Y += gv.Y
 
-    this.UpdateNewPosition(this.Velocity)
+    this.newPos.X += this.Velocity.X
+    this.newPos.Y += this.Velocity.Y
+    
+    //this.UpdateNewPosition(this.Velocity)
   }
 
   GetDisplacementTo(otherObject, overlap) {
@@ -163,14 +143,17 @@ export class SpaceObject {
 
     // Collision vector
     var delta = {
-      x: b2.position.X - b1.position.X,
-      y: b2.position.Y - b1.position.Y
+      x: b2.newPos.X - b1.newPos.X,
+      y: b2.newPos.Y - b1.newPos.Y
     };
 
     // can't have a zero-distance (you get black holes and such)
     if (delta.x == 0 && delta.y == 0) {
-      delta.x = Math.random()
-      delta.y = Math.random()
+      console.log('zero distance collision!!!')
+      return
+      //just use a random value between 0 and 1
+//      delta.x = Math.random()
+//      delta.y = Math.random()
     }
 
     var d = Math.sqrt(delta.x * delta.x + delta.y * delta.y)
@@ -184,7 +167,7 @@ export class SpaceObject {
     // Normalized tangent collision vector
     var dt = {
       x: dn.y,
-      y: dn.x
+      y: -dn.x
     };
 
     // projection of v1 on the collision vector
@@ -212,12 +195,6 @@ export class SpaceObject {
       Y1: newV1ProjN * dn.y + v1Proj.t * dt.y,
       X2: newV2ProjN * dn.x + v2Proj.t * dt.x,
       Y2: newV2ProjN * dn.y + v2Proj.t * dt.y,
-    }
-
-    // detect unreasonable acceleration
-    if (Math.abs(result.X1) - Math.abs(b1.Velocity.X) > 15) {
-      console.log({ id: b1.id, v1x, v1y, v2x, v2y, result })
-      //debugger
     }
 
     return result

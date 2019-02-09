@@ -22,11 +22,13 @@ export class renderSVG {
 			}
 		});
 
-		if (!this.overview) {
+		if (this.svg && !this.overview) {
 			this.overview = new rectangle({ id: 'overview' })
 			this.svg.appendChild(this.overview.element)
 		}
-		this.overview.update(this.game.universe.OverviewSize)
+		
+		if(this.overview)
+			this.overview.update(this.game.universe.OverviewSize)
 	}
 }
 

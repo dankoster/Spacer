@@ -20,7 +20,20 @@ svg {
   border: 1px solid #ccc;
 }
 
-.controls {
+.bottom {
+	display:flex;
+	flex-direction: row;
+}
+
+.bottom .info {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  color: white;
+}
+
+.bottom .controls {
+  display: flex;
   padding:10px;
 }
 
