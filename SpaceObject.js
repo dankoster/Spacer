@@ -66,7 +66,7 @@ export class SpaceObject {
     this.position.Y = this.newPos.Y;
   }
 
-  CalculateNewVelocity() {
+  CalculateNewVelocity({cr = 0.98}) {
     //Have to calculate the new position separately from the thix.X and this.Y
     // because changes to those don't take effect until the page is rendered
     this.newPos.X = this.position.X
@@ -90,11 +90,11 @@ export class SpaceObject {
           uo.newPos.X += di.X
           uo.newPos.Y += di.Y
 
-          var newV = this.ResolveCollision(this, uo)
-
-          var damper = 0.98
-          this.Velocity = newV.V1.Multiply(damper)
-          uo.Velocity = newV.V2.Multiply(damper)
+          if(0 >= cr > 1) throw `Collision damper {damper} is invalid`
+          var newV = this.ResolveCollision(this, uo, cr)
+          
+          this.Velocity = newV.V1
+          uo.Velocity = newV.V2
         }
       }
     }
@@ -124,10 +124,11 @@ export class SpaceObject {
     so.newPos.Y += v.Y
   }
 
-  ResolveCollision(b1, b2) {
+  ResolveCollision(b1, b2, cr) {
     //https://stackoverflow.com/a/27016465
     //https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf
-
+    //https://en.wikipedia.org/wiki/Inelastic_collision
+    
     var v1x = b1.Velocity.X,
       v2x = b2.Velocity.X,
       v1y = b1.Velocity.Y,
@@ -187,11 +188,6 @@ export class SpaceObject {
       V1: v1n.Add(v1t),
       V2: v2n.Add(v2t)
     }
-
-    // // detect unreasonable acceleration
-    // if (Math.abs(result.X1) - Math.abs(b1.Velocity.X) > 20) {
-    //   console.log({ id: b1.id, v1x, v1y, v2x, v2y, result })
-    // }
 
     return result
   }
