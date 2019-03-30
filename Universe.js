@@ -45,9 +45,9 @@ export class Universe {
     this.Objects.push(so);
   }
 
-  UpdatePositions() {
+  UpdatePositions({cr}) {
     for (var o in this.Objects) {
-      this.Objects[o].CalculateNewVelocity();
+      this.Objects[o].CalculateNewVelocity({cr});
     }
     for (var o in this.Objects) {
       this.Objects[o].UpdatePosition();

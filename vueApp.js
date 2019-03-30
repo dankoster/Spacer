@@ -13,7 +13,8 @@ var app = new Vue({
 		height: 600,
 		perspectiveDistance: 100,
 		originX: 50,
-		originY: 50
+		originY: 50,
+		damper: 0.98
 	},
 	mounted: function () {
 
@@ -26,7 +27,7 @@ var app = new Vue({
 
 			var loop = function (tFrame) {
 
-				game.universe.UpdatePositions();
+				game.universe.UpdatePositions({cr: v.Damper});
 
 				//limit fps for display rendering
 				now = tFrame;
@@ -50,11 +51,20 @@ var app = new Vue({
 		//usage  v-bind:view-box.camel="viewBoxValue"
 		viewBoxValue: function () {
 			return `${this.minx} ${this.miny} ${this.width} ${this.height}`
+		},
+		Damper: function() {
+			return Number(this.damper)
 		}
 	},
 	methods: {
 		test: function (event) {
 			this.game.test()
+		},
+		test2: function (event) {
+			this.game.test(2)
+		},
+		test3: function (event) {
+			this.game.test(3)
 		},
 		setViewBox(o) {
 			o = o ? o : game.universe.OverviewSize
