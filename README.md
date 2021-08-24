@@ -10,7 +10,7 @@ git clone https://github.com/dankoster/Spacer.git
 
 Start a simple web server in the local folder [because ES6 modules are subject to CORS](https://stackoverflow.com/q/52919331)
 ```
-python -m SimpleHTTPServer 8000
+npx serve
 ```
 
-Navitage to http://localhost:8000/space.html
+Navitage to http://localhost:5000
